@@ -1,0 +1,13 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.rok-labs/wolfpack-intelligence",
+  "title": "Wolfpack Intelligence",
+  "description": "On-chain security and market intelligence for trading agents on Base.",
+  "version": "2.0.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.wolfpack.roklabs.dev/api/v1/mcp"
+    }
+  ]
+}
