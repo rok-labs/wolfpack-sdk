@@ -7,51 +7,55 @@
     "request": {
       "type": "object",
       "properties": {
-        "token_a": {
-          "type": "string",
-          "description": "0x-prefixed address of token A",
-          "pattern": "^0x[a-fA-F0-9]{40}$"
-        },
-        "token_b": {
-          "type": "string",
-          "description": "0x-prefixed address of token B",
-          "pattern": "^0x[a-fA-F0-9]{40}$"
-        },
-        "entry_price_ratio": {
+        "entry_price": {
           "type": "number",
-          "description": "Price ratio of token A to token B at entry"
+          "description": "Token price at time of entry (USD)"
         },
-        "current_price_ratio": {
+        "current_price": {
           "type": "number",
-          "description": "Current price ratio of token A to token B"
+          "description": "Current token price (USD)"
         },
-        "position_type": {
+        "position_size_usd": {
+          "type": "number",
+          "description": "Position size in USD at entry"
+        },
+        "pool_type": {
           "type": "string",
-          "description": "AMM position type",
+          "description": "AMM pool type",
           "enum": ["standard", "concentrated"],
           "default": "standard"
         },
-        "range_lower": {
+        "price_lower": {
           "type": "number",
           "description": "Lower price bound (required for concentrated positions)"
         },
-        "range_upper": {
+        "price_upper": {
           "type": "number",
-          "description": "Upper price bound (required for concentrated positions)"
+          "description": "Upper price bound (required for concentrated positions, must be > price_lower)"
         }
       },
-      "required": ["token_a", "token_b", "entry_price_ratio", "current_price_ratio"]
+      "required": ["entry_price", "current_price", "position_size_usd"]
     },
     "response": {
       "type": "object",
       "properties": {
-        "il_percent": { "type": "number", "description": "Impermanent loss as a percentage" },
-        "il_usd": { "type": "number", "description": "Impermanent loss in USD" },
-        "position_value_usd": { "type": "number", "description": "Current value of LP position in USD" },
-        "hold_value_usd": { "type": "number", "description": "Value if tokens were simply held (no LP)" },
-        "price_change_percent": { "type": "number", "description": "Price ratio change percentage" },
-        "position_type": { "type": "string", "enum": ["standard", "concentrated"] },
-        "in_range": { "type": "boolean", "description": "Whether current price is within the concentrated range (null for standard)" }
+        "pool_type": { "type": "string", "enum": ["standard", "concentrated"] },
+        "il": {
+          "type": "object",
+          "properties": {
+            "il_percent": { "type": "number", "description": "Impermanent loss as a percentage" },
+            "il_usd": { "type": "number", "description": "Impermanent loss in USD" },
+            "lp_value_usd": { "type": "number", "description": "Current value of LP position in USD" },
+            "hodl_value_usd": { "type": "number", "description": "Value if tokens were simply held (no LP)" },
+            "price_ratio": { "type": "number", "description": "Current price / entry price" },
+            "in_range": { "type": "boolean", "description": "Whether current price is within the concentrated range (concentrated only)" },
+            "price_lower": { "type": "number", "description": "Lower bound of range (concentrated only)" },
+            "price_upper": { "type": "number", "description": "Upper bound of range (concentrated only)" },
+            "amplification_factor": { "type": "number", "description": "Capital efficiency multiplier vs full-range (concentrated only)" }
+          }
+        },
+        "net_yield": { "type": ["object", "null"], "description": "Net yield after IL (if yield data available)" },
+        "summary": { "type": "string", "description": "Human-readable analysis summary" }
       }
     }
   }
