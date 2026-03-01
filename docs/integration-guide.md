@@ -1,8 +1,35 @@
-# Integration Guide: Add Pre-Trade Security to Your Agent
+# Integration Guide: Intelligence for Trading Agents
 
-## The 5-Line Integration
+## One Call Gets Everything: mega_report
 
-The fastest way to add Wolfpack security checks to any trading agent:
+The fastest way to get full intelligence on any token. A single `mega_report` call returns security, market data, smart money activity, narrative momentum, and technical analysis — everything a trading agent needs to make a decision.
+
+```typescript
+// Submit a mega report request
+const res = await fetch("https://api.wolfpack.roklabs.dev/api/v1/intelligence/mega-report", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ token_address: "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed", chain: "base" }),
+});
+const { report_id } = await res.json();
+
+// Retrieve the full report
+const report = await fetch(`https://api.wolfpack.roklabs.dev/api/mega-reports/${report_id}`).then(r => r.json());
+
+// Make decisions from the unified report
+if (!report.security.safe) return { action: "abort", reason: report.security.risk_flags };
+if (report.overall_risk_score > 70) return { action: "abort", reason: "high risk" };
+if (report.technical_analysis.rsi_14 > 80) return { action: "wait", reason: "overbought" };
+return { action: "trade", confidence: 100 - report.overall_risk_score };
+```
+
+At **$0.15 per call** (vs ~$0.26 calling each service individually), `mega_report` is the recommended starting point for any trading agent.
+
+## Modular Integration: Pick What You Need
+
+If you only need specific intelligence, call individual services:
+
+### Pre-Trade Security Gate (Fastest)
 
 ```typescript
 const res = await fetch("https://api.wolfpack.roklabs.dev/api/v1/intelligence/security-check", {
@@ -14,11 +41,7 @@ const { safe } = await res.json();
 if (!safe) throw new Error("Token failed security check");
 ```
 
-That's it. Before any trade execution, call the security check endpoint. If `safe` is false, abort the trade.
-
-## Deeper Integration: Full Risk Analysis
-
-For agents that need more context before trading:
+### Step-by-Step Risk Pipeline
 
 ```typescript
 // 1. Quick safety gate (< 1 second)
@@ -29,12 +52,52 @@ if (!security.safe) return { action: "abort", reason: security.risk_flags };
 const risk = await fetch(".../token-risk", { ... }).then(r => r.json());
 if (risk.risk_score > 70) return { action: "abort", reason: "high risk score" };
 
-// 3. Narrative momentum check (2-4 seconds)
+// 3. Technical analysis (2-3 seconds)
+const ta = await fetch(".../technical-analysis", { ... }).then(r => r.json());
+if (ta.rsi_14 > 80) return { action: "wait", reason: "overbought" };
+
+// 4. Narrative momentum check (2-4 seconds)
 const narrative = await fetch(".../narrative-score", { ... }).then(r => r.json());
 if (narrative.momentum_score < 20) return { action: "wait", reason: "low social momentum" };
 
-// 4. All checks passed — execute trade
+// 5. All checks passed — execute trade
 return { action: "trade", confidence: Math.max(0, 100 - risk.risk_score) };
+```
+
+### DeFi-Specific: Yield + IL Analysis
+
+```typescript
+// Check yield opportunities with IL awareness
+const yields = await fetch(".../yield-scanner", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ token_address: "0x...", min_tvl_usd: 100000, min_apy: 5.0 }),
+}).then(r => r.json());
+
+// Calculate IL for a specific position
+const il = await fetch(".../il-calculator", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    token_a: "0x4200000000000000000000000000000000000006",
+    token_b: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    entry_price_ratio: 3200.0,
+    current_price_ratio: 3500.0,
+    position_type: "concentrated",
+    range_lower: 3000.0,
+    range_upper: 4000.0,
+  }),
+}).then(r => r.json());
+```
+
+### Prediction Markets
+
+```typescript
+const predictions = await fetch(".../prediction-market", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ query: "Bitcoin above 100k", category: "crypto" }),
+}).then(r => r.json());
 ```
 
 ## MCP Integration for AI Agents
@@ -52,7 +115,7 @@ If your agent uses the Model Context Protocol, add Wolfpack as a tool provider:
 }
 ```
 
-Your agent can then call `security_check`, `token_risk_analysis`, `narrative_momentum`, and `agent_trust_score` as native tools.
+Your agent can then call all 11 tools natively: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`.
 
 ## Error Handling
 

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "yield_analysis",
+  "description": "IL-aware yield opportunities on Base sourced from DefiLlama. Factors in impermanent loss estimates for real return comparison.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_address": {
+          "type": "string",
+          "description": "0x-prefixed contract address to find yield opportunities for",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "min_tvl_usd": {
+          "type": "number",
+          "description": "Minimum TVL in USD to filter pools",
+          "default": 100000
+        },
+        "min_apy": {
+          "type": "number",
+          "description": "Minimum APY percentage to filter pools",
+          "default": 5.0
+        }
+      },
+      "required": ["token_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "opportunities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pool": { "type": "string", "description": "Pool name / pair" },
+              "protocol": { "type": "string", "description": "DeFi protocol name" },
+              "apy": { "type": "number", "description": "Gross APY percentage" },
+              "tvl_usd": { "type": "number", "description": "Total value locked in USD" },
+              "il_estimate_30d": { "type": "number", "description": "Estimated impermanent loss over 30 days (%)" },
+              "net_apy": { "type": "number", "description": "APY after estimated IL deduction" }
+            }
+          }
+        },
+        "total_opportunities": { "type": "integer" }
+      }
+    }
+  }
+}

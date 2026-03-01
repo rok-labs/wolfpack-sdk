@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "mega_report",
+  "description": "Aggregated intelligence report: security + market data + smart money + narrative + technical analysis in one call. POST to start, GET /api/mega-reports/:id to retrieve the full report.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_address": {
+          "type": "string",
+          "description": "0x-prefixed contract address on Base",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "chain": {
+          "type": "string",
+          "default": "base",
+          "enum": ["base"]
+        }
+      },
+      "required": ["token_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "report_id": { "type": "string", "description": "Unique report ID for retrieval via GET /api/mega-reports/:id" },
+        "token_address": { "type": "string", "description": "Token address analyzed" },
+        "security": {
+          "type": "object",
+          "description": "GoPlus security scan results",
+          "properties": {
+            "safe": { "type": "boolean" },
+            "honeypot": { "type": "boolean" },
+            "verified_source": { "type": "boolean" },
+            "risk_flags": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "market": {
+          "type": "object",
+          "description": "DexScreener market data",
+          "properties": {
+            "price_usd": { "type": "number" },
+            "volume_24h": { "type": "number" },
+            "liquidity_usd": { "type": "number" },
+            "price_change_24h": { "type": "number" }
+          }
+        },
+        "smart_money": {
+          "type": "object",
+          "description": "Dune smart money wallet activity",
+          "properties": {
+            "net_flow_24h": { "type": "number" },
+            "active_wallets": { "type": "integer" },
+            "trend": { "type": "string", "enum": ["accumulating", "distributing", "neutral"] }
+          }
+        },
+        "narrative": {
+          "type": "object",
+          "description": "Social momentum analysis",
+          "properties": {
+            "momentum_score": { "type": "number" },
+            "sentiment": { "type": "string" },
+            "tweet_count": { "type": "integer" }
+          }
+        },
+        "technical_analysis": {
+          "type": "object",
+          "description": "Technical indicators from GeckoTerminal OHLCV",
+          "properties": {
+            "rsi_14": { "type": "number" },
+            "sma_20": { "type": "number" },
+            "bollinger_position": { "type": "string" },
+            "support": { "type": "number" },
+            "resistance": { "type": "number" }
+          }
+        },
+        "overall_risk_score": { "type": "number", "description": "Unified risk score 0-100 (higher = riskier)" },
+        "risk_level": { "type": "string", "enum": ["low", "medium", "high", "critical"] }
+      }
+    }
+  }
+}
