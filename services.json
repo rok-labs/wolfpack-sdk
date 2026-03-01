@@ -1,6 +1,6 @@
 {
   "name": "Wolfpack Intelligence",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "base_url": "https://api.wolfpack.roklabs.dev",
   "services": [
     {
@@ -51,6 +51,41 @@
       "endpoint": "/api/v1/intelligence/query",
       "price_usd": 15.00,
       "avg_latency_ms": 300000
+    },
+    {
+      "name": "mega_report",
+      "description": "Aggregated report: security + market data + smart money + narrative + TA in one call",
+      "endpoint": "/api/v1/intelligence/mega-report",
+      "price_usd": 0.15,
+      "avg_latency_ms": 8000
+    },
+    {
+      "name": "prediction_market",
+      "description": "Polymarket crypto prediction market odds, volume, and liquidity",
+      "endpoint": "/api/v1/intelligence/prediction-market",
+      "price_usd": 0.03,
+      "avg_latency_ms": 2000
+    },
+    {
+      "name": "il_calculator",
+      "description": "Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity",
+      "endpoint": "/api/v1/intelligence/il-calculator",
+      "price_usd": 0.03,
+      "avg_latency_ms": 1500
+    },
+    {
+      "name": "yield_analysis",
+      "description": "IL-aware yield opportunities on Base via DefiLlama",
+      "endpoint": "/api/v1/intelligence/yield-scanner",
+      "price_usd": 0.05,
+      "avg_latency_ms": 3000
+    },
+    {
+      "name": "technical_analysis",
+      "description": "RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV data",
+      "endpoint": "/api/v1/intelligence/technical-analysis",
+      "price_usd": 0.05,
+      "avg_latency_ms": 2500
     }
   ],
   "protocols": {

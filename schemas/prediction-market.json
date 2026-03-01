@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "prediction_market",
+  "description": "Polymarket crypto prediction market odds, volume, and liquidity.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for prediction markets (e.g. 'Bitcoin above 100k')"
+        },
+        "category": {
+          "type": "string",
+          "description": "Market category filter",
+          "enum": ["crypto", "politics", "sports", "science", "culture"],
+          "default": "crypto"
+        }
+      },
+      "required": ["query"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "markets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string", "description": "Market question" },
+              "outcome_yes": { "type": "number", "description": "Probability of YES outcome (0-1)" },
+              "outcome_no": { "type": "number", "description": "Probability of NO outcome (0-1)" },
+              "volume_usd": { "type": "number", "description": "Total trading volume in USD" },
+              "liquidity_usd": { "type": "number", "description": "Available liquidity in USD" },
+              "end_date": { "type": "string", "format": "date-time", "description": "Market resolution date" }
+            }
+          }
+        },
+        "total_markets": { "type": "integer", "description": "Number of matching markets returned" }
+      }
+    }
+  }
+}

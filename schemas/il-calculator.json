@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "il_calculator",
+  "description": "Impermanent loss calculator for standard constant-product AMM and Uniswap V3 concentrated liquidity positions.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_a": {
+          "type": "string",
+          "description": "0x-prefixed address of token A",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "token_b": {
+          "type": "string",
+          "description": "0x-prefixed address of token B",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "entry_price_ratio": {
+          "type": "number",
+          "description": "Price ratio of token A to token B at entry"
+        },
+        "current_price_ratio": {
+          "type": "number",
+          "description": "Current price ratio of token A to token B"
+        },
+        "position_type": {
+          "type": "string",
+          "description": "AMM position type",
+          "enum": ["standard", "concentrated"],
+          "default": "standard"
+        },
+        "range_lower": {
+          "type": "number",
+          "description": "Lower price bound (required for concentrated positions)"
+        },
+        "range_upper": {
+          "type": "number",
+          "description": "Upper price bound (required for concentrated positions)"
+        }
+      },
+      "required": ["token_a", "token_b", "entry_price_ratio", "current_price_ratio"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "il_percent": { "type": "number", "description": "Impermanent loss as a percentage" },
+        "il_usd": { "type": "number", "description": "Impermanent loss in USD" },
+        "position_value_usd": { "type": "number", "description": "Current value of LP position in USD" },
+        "hold_value_usd": { "type": "number", "description": "Value if tokens were simply held (no LP)" },
+        "price_change_percent": { "type": "number", "description": "Price ratio change percentage" },
+        "position_type": { "type": "string", "enum": ["standard", "concentrated"] },
+        "in_range": { "type": "boolean", "description": "Whether current price is within the concentrated range (null for standard)" }
+      }
+    }
+  }
+}

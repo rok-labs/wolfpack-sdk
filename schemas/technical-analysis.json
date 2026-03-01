@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "technical_analysis",
+  "description": "RSI, SMA, Bollinger Bands, and support/resistance levels computed from GeckoTerminal OHLCV data.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_address": {
+          "type": "string",
+          "description": "0x-prefixed contract address on Base",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "chain": {
+          "type": "string",
+          "default": "base",
+          "enum": ["base"]
+        },
+        "timeframe": {
+          "type": "string",
+          "description": "OHLCV candle timeframe",
+          "enum": ["5m", "15m", "1h", "4h", "1d"],
+          "default": "1h"
+        },
+        "periods": {
+          "type": "integer",
+          "description": "Number of candles to analyze",
+          "default": 50
+        }
+      },
+      "required": ["token_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "rsi_14": { "type": "number", "description": "14-period Relative Strength Index (0-100)" },
+        "sma_20": { "type": "number", "description": "20-period Simple Moving Average" },
+        "sma_50": { "type": "number", "description": "50-period Simple Moving Average" },
+        "bollinger_upper": { "type": "number", "description": "Upper Bollinger Band (2 std dev)" },
+        "bollinger_lower": { "type": "number", "description": "Lower Bollinger Band (2 std dev)" },
+        "bollinger_position": { "type": "string", "description": "Price position relative to bands", "enum": ["above", "upper", "middle", "lower", "below"] },
+        "support": { "type": "number", "description": "Nearest support level" },
+        "resistance": { "type": "number", "description": "Nearest resistance level" },
+        "trend": { "type": "string", "description": "Overall trend direction", "enum": ["bullish", "bearish", "neutral"] },
+        "timeframe": { "type": "string", "description": "Timeframe used for analysis" },
+        "candles_analyzed": { "type": "integer", "description": "Number of candles used" }
+      }
+    }
+  }
+}

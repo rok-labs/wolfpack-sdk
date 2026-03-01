@@ -2,21 +2,87 @@
 
 On-chain security and market intelligence for trading agents on Base.
 
-Wolfpack provides 7 intelligence services via multiple protocols. Use this SDK to integrate pre-trade security checks, token risk analysis, narrative scoring, and more into your agent or application.
+Wolfpack provides 11 intelligence services via multiple protocols. Use this SDK to integrate pre-trade security checks, token risk analysis, narrative scoring, and more into your agent or application.
 
 ## Services
 
 | Service | Description | Price | Latency |
 |---------|-------------|-------|---------|
+| `mega_report` | Aggregated report: security + market + smart money + narrative + TA in one call | $0.15 | 5-8s |
 | `security_check` | GoPlus honeypot detection, contract verification, ownership analysis | $0.01 | <1s |
 | `token_risk_analysis` | 360° risk audit: honeypot, liquidity, holders, smart money, social | $0.05 | 3-5s |
 | `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement quality, KOL ratio | $0.10 | 2-4s |
 | `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | $0.05 | 2-3s |
 | `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | $0.01 | 2-3s |
 | `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | $0.02 | <1s |
+| `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | $0.03 | 1-2s |
+| `il_calculator` | Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity | $0.03 | 1-2s |
+| `yield_analysis` | IL-aware yield opportunities on Base via DefiLlama | $0.05 | 2-3s |
+| `technical_analysis` | RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV | $0.05 | 2-3s |
 | `agent_audit_standard` | LLM-driven agent stress test (10 jobs, scored report) | $15.00 | ~5min |
 
-## Quick Start: Add Pre-Trade Security in 5 Lines
+## Quick Start: One Call Gets Everything
+
+The `mega_report` bundles security, market data, smart money, narrative, and technical analysis into a single request — cheaper than calling each service individually ($0.15 vs ~$0.26).
+
+```bash
+# Start a mega report
+curl -X POST https://api.wolfpack.roklabs.dev/api/v1/intelligence/mega-report \
+  -H "Content-Type: application/json" \
+  -d '{"token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed", "chain": "base"}'
+
+# Response includes a report_id — retrieve the full report:
+curl https://api.wolfpack.roklabs.dev/api/mega-reports/abc123-report-id
+```
+
+**mega_report input:**
+```json
+{
+  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
+  "chain": "base"
+}
+```
+
+**mega_report output:**
+```json
+{
+  "report_id": "abc123-report-id",
+  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
+  "security": {
+    "safe": true,
+    "honeypot": false,
+    "verified_source": true,
+    "risk_flags": []
+  },
+  "market": {
+    "price_usd": 0.0123,
+    "volume_24h": 5200000,
+    "liquidity_usd": 3100000,
+    "price_change_24h": 12.5
+  },
+  "smart_money": {
+    "net_flow_24h": 150000,
+    "active_wallets": 12,
+    "trend": "accumulating"
+  },
+  "narrative": {
+    "momentum_score": 72,
+    "sentiment": "bullish",
+    "tweet_count": 340
+  },
+  "technical_analysis": {
+    "rsi_14": 58.3,
+    "sma_20": 0.0118,
+    "bollinger_position": "middle",
+    "support": 0.0105,
+    "resistance": 0.0140
+  },
+  "overall_risk_score": 35,
+  "risk_level": "medium"
+}
+```
+
+## Quick Start: Simple Security Check
 
 ```typescript
 // TypeScript — x402 micropayment
@@ -47,10 +113,15 @@ USDC payments on Base, processed automatically. See [`examples/typescript/`](./e
 
 | Endpoint | Service |
 |----------|---------|
+| `POST /api/v1/intelligence/mega-report` | mega_report |
 | `POST /api/v1/intelligence/security-check` | security_check |
 | `POST /api/v1/intelligence/token-risk` | token_risk_analysis |
 | `POST /api/v1/intelligence/narrative-score` | narrative_momentum |
 | `POST /api/v1/intelligence/agent-trust` | agent_trust_score |
+| `POST /api/v1/intelligence/prediction-market` | prediction_market |
+| `POST /api/v1/intelligence/il-calculator` | il_calculator |
+| `POST /api/v1/intelligence/yield-scanner` | yield_analysis |
+| `POST /api/v1/intelligence/technical-analysis` | technical_analysis |
 | `POST /api/v1/intelligence/query` | All services (route via `service_type` field) |
 
 ### 2. MCP (Model Context Protocol)
@@ -72,7 +143,7 @@ Connect any MCP-compatible client (Claude Desktop, Cursor, etc.) to Wolfpack as 
 
 **Server Card:** [`https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json`](https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json)
 
-4 tools available: `token_risk_analysis`, `security_check`, `narrative_momentum`, `agent_trust_score`
+11 tools available: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`
 
 ### 3. Google A2A (Agent-to-Agent)
 
@@ -95,6 +166,20 @@ For agents in the Virtuals ecosystem. Wolfpack is registered as a seller with 4 
 - **Schemas:** [`schemas/`](./schemas/) — JSON Schema for all service inputs/outputs
 
 ## Service Details
+
+### mega_report
+
+Aggregated intelligence report combining security, market data, smart money, narrative, and technical analysis in one call. Submit via POST, retrieve the full report via GET using the returned `report_id`.
+
+**Input:**
+```json
+{
+  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
+  "chain": "base"
+}
+```
+
+**Output:** See [mega_report output example above](#quick-start-one-call-gets-everything).
 
 ### security_check
 
@@ -159,11 +244,97 @@ Composite reliability rating for ACP/ERC-8004 agents. Scores on ACP performance 
 }
 ```
 
+### prediction_market
+
+Polymarket crypto prediction market data — odds, volume, liquidity, and outcome probabilities.
+
+**Input:**
+```json
+{
+  "query": "Bitcoin above 100k",
+  "category": "crypto"
+}
+```
+
+**Output:**
+```json
+{
+  "markets": [
+    {
+      "title": "Will Bitcoin be above $100k on June 30?",
+      "outcome_yes": 0.72,
+      "outcome_no": 0.28,
+      "volume_usd": 4500000,
+      "liquidity_usd": 890000,
+      "end_date": "2026-06-30T00:00:00Z"
+    }
+  ],
+  "total_markets": 1
+}
+```
+
+### il_calculator
+
+Impermanent loss calculator supporting standard constant-product AMM and Uniswap V3 concentrated liquidity positions.
+
+**Input:**
+```json
+{
+  "token_a": "0x4200000000000000000000000000000000000006",
+  "token_b": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "entry_price_ratio": 3200.0,
+  "current_price_ratio": 3500.0,
+  "position_type": "concentrated",
+  "range_lower": 3000.0,
+  "range_upper": 4000.0
+}
+```
+
+**Output:**
+```json
+{
+  "il_percent": 0.42,
+  "il_usd": 84.20,
+  "position_value_usd": 19915.80,
+  "hold_value_usd": 20000.00,
+  "price_change_percent": 9.38,
+  "position_type": "concentrated",
+  "in_range": true
+}
+```
+
+### yield_analysis
+
+IL-aware yield opportunities on Base sourced from DefiLlama. Factors in impermanent loss estimates so agents can compare real returns.
+
+**Input:**
+```json
+{
+  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
+  "min_tvl_usd": 100000,
+  "min_apy": 5.0
+}
+```
+
+### technical_analysis
+
+RSI, SMA, Bollinger Bands, support/resistance levels computed from GeckoTerminal OHLCV data.
+
+**Input:**
+```json
+{
+  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
+  "chain": "base",
+  "timeframe": "1h",
+  "periods": 50
+}
+```
+
 ## Architecture
 
 Wolfpack Intelligence is a live production system running on Base chain. Services are deterministic where possible (no LLM in security_check, smart_money_signals, token_market_snapshot) and LLM-enhanced where value requires it (narrative_momentum, agent_audit).
 
-All data is sourced from on-chain and public APIs: GoPlus Security, DexScreener, Dune Analytics, TwitterAPI.io, CoinGecko.
+All data is sourced from on-chain and public APIs: GoPlus Security, DexScreener, Dune Analytics, TwitterAPI.io, CoinGecko, GeckoTerminal, DefiLlama, Polymarket.
 
 ## Links
 
