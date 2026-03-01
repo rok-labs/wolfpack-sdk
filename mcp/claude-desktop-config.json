@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "wolfpack-intelligence": {
+      "transport": "streamable-http",
+      "url": "https://api.wolfpack.roklabs.dev/api/v1/mcp"
+    }
+  }
+}

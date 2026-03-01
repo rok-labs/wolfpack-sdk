@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "narrative_momentum",
+  "description": "Score the momentum of a crypto narrative or topic. Analyzes Twitter/X social signals.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "query": { "type": "string", "description": "Narrative topic, token name, or project to analyze" },
+        "keywords": { "type": "array", "items": { "type": "string" }, "description": "Additional search keywords" },
+        "contracts": { "type": "array", "items": { "type": "string" }, "description": "Contract addresses for on-chain corroboration" }
+      },
+      "required": ["query"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "momentum_score": { "type": "number", "description": "Overall momentum 0-100" },
+        "sentiment": { "type": "string", "enum": ["very_bearish", "bearish", "neutral", "bullish", "very_bullish"] },
+        "tweet_count": { "type": "number", "description": "Number of tweets analyzed" },
+        "engagement_quality": { "type": "number", "description": "Quality-weighted engagement 0-100" },
+        "influencer_ratio": { "type": "number", "description": "Ratio of high-follower accounts in the conversation" }
+      }
+    }
+  }
+}

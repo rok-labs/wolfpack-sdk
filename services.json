@@ -1,0 +1,74 @@
+{
+  "name": "Wolfpack Intelligence",
+  "version": "2.0.0",
+  "base_url": "https://api.wolfpack.roklabs.dev",
+  "services": [
+    {
+      "name": "security_check",
+      "description": "GoPlus-powered token security scan",
+      "endpoint": "/api/v1/intelligence/security-check",
+      "price_usd": 0.01,
+      "avg_latency_ms": 800
+    },
+    {
+      "name": "token_risk_analysis",
+      "description": "Multi-source 360° token risk scoring",
+      "endpoint": "/api/v1/intelligence/token-risk",
+      "price_usd": 0.05,
+      "avg_latency_ms": 4000
+    },
+    {
+      "name": "narrative_momentum",
+      "description": "Crypto narrative social momentum scoring",
+      "endpoint": "/api/v1/intelligence/narrative-score",
+      "price_usd": 0.10,
+      "avg_latency_ms": 3000
+    },
+    {
+      "name": "agent_trust_score",
+      "description": "Composite agent reliability rating",
+      "endpoint": "/api/v1/intelligence/agent-trust",
+      "price_usd": 0.05,
+      "avg_latency_ms": 2500
+    },
+    {
+      "name": "smart_money_signals",
+      "description": "Smart money wallet activity on Base",
+      "endpoint": "/api/v1/intelligence/query",
+      "price_usd": 0.01,
+      "avg_latency_ms": 2500
+    },
+    {
+      "name": "token_market_snapshot",
+      "description": "DexScreener market data snapshot",
+      "endpoint": "/api/v1/intelligence/query",
+      "price_usd": 0.02,
+      "avg_latency_ms": 800
+    },
+    {
+      "name": "agent_audit_standard",
+      "description": "LLM-driven agent stress test and scoring",
+      "endpoint": "/api/v1/intelligence/query",
+      "price_usd": 15.00,
+      "avg_latency_ms": 300000
+    }
+  ],
+  "protocols": {
+    "x402": {
+      "base_url": "https://api.wolfpack.roklabs.dev/api/v1/intelligence",
+      "payment": "USDC on Base"
+    },
+    "mcp": {
+      "url": "https://api.wolfpack.roklabs.dev/api/v1/mcp",
+      "server_card": "https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json"
+    },
+    "a2a": {
+      "url": "https://api.wolfpack.roklabs.dev/api/v1/a2a",
+      "agent_card": "https://api.wolfpack.roklabs.dev/.well-known/agent.json"
+    },
+    "acp": {
+      "agent_id": 16907,
+      "services": ["security_check", "token_risk_analysis", "narrative_momentum", "agent_trust_score"]
+    }
+  }
+}

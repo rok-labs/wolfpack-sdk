@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "security_check",
+  "description": "GoPlus-powered token security scan. Returns honeypot status, contract verification, ownership flags, and holder concentration.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_address": {
+          "type": "string",
+          "description": "0x-prefixed contract address on Base (40 hex characters)",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "chain": {
+          "type": "string",
+          "description": "Blockchain network",
+          "default": "base",
+          "enum": ["base"]
+        }
+      },
+      "required": ["token_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "safe": { "type": "boolean", "description": "Overall safety verdict (false if any critical flag is set)" },
+        "honeypot": { "type": "boolean", "description": "Token is a honeypot (cannot sell)" },
+        "verified_source": { "type": "boolean", "description": "Contract source code is verified on explorer" },
+        "hidden_owner": { "type": "boolean", "description": "Contract has a hidden owner" },
+        "can_take_back_ownership": { "type": "boolean", "description": "Owner can reclaim ownership after renouncing" },
+        "is_proxy": { "type": "boolean", "description": "Contract is upgradeable proxy (informational, not inherently unsafe)" },
+        "is_mintable": { "type": "boolean", "description": "Token supply can be minted (informational)" },
+        "holder_count": { "type": "number", "description": "Total number of token holders" },
+        "top10_holder_percent": { "type": "number", "description": "Percentage of supply held by top 10 wallets" },
+        "creator_percent": { "type": "number", "description": "Percentage of supply held by contract creator" },
+        "risk_flags": { "type": "array", "items": { "type": "string" }, "description": "List of active risk flags" }
+      }
+    }
+  }
+}

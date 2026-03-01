@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "token_risk_analysis",
+  "description": "Comprehensive multi-source token risk scoring. Combines GoPlus, DexScreener, Dune Analytics, and Twitter social signals.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_address": {
+          "type": "string",
+          "description": "0x-prefixed contract address on Base",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "chain": {
+          "type": "string",
+          "default": "base",
+          "enum": ["base"]
+        },
+        "analysis_depth": {
+          "type": "string",
+          "description": "standard = fast (~3s), deep = comprehensive with narrative fallback (~8s)",
+          "enum": ["standard", "deep"],
+          "default": "standard"
+        }
+      },
+      "required": ["token_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "risk_score": { "type": "number", "description": "Overall risk score 0-100 (higher = riskier)" },
+        "risk_level": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "security": { "type": "object", "description": "GoPlus security check results" },
+        "liquidity": { "type": "object", "description": "DexScreener liquidity and volume data" },
+        "social": { "type": "object", "description": "Twitter social signal analysis" },
+        "smart_money": { "type": "object", "description": "Dune smart money activity" }
+      }
+    }
+  }
+}
