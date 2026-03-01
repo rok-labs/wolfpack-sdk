@@ -277,29 +277,43 @@ Polymarket crypto prediction market data — odds, volume, liquidity, and outcom
 
 Impermanent loss calculator supporting standard constant-product AMM and Uniswap V3 concentrated liquidity positions.
 
-**Input:**
+**Input (standard):**
 ```json
 {
-  "token_a": "0x4200000000000000000000000000000000000006",
-  "token_b": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-  "entry_price_ratio": 3200.0,
-  "current_price_ratio": 3500.0,
-  "position_type": "concentrated",
-  "range_lower": 3000.0,
-  "range_upper": 4000.0
+  "entry_price": 3200.0,
+  "current_price": 3500.0,
+  "position_size_usd": 10000
+}
+```
+
+**Input (concentrated — Uni V3):**
+```json
+{
+  "entry_price": 3200.0,
+  "current_price": 3500.0,
+  "position_size_usd": 10000,
+  "pool_type": "concentrated",
+  "price_lower": 3000.0,
+  "price_upper": 4000.0
 }
 ```
 
 **Output:**
 ```json
 {
-  "il_percent": 0.42,
-  "il_usd": 84.20,
-  "position_value_usd": 19915.80,
-  "hold_value_usd": 20000.00,
-  "price_change_percent": 9.38,
-  "position_type": "concentrated",
-  "in_range": true
+  "pool_type": "concentrated",
+  "il": {
+    "il_percent": 0.95,
+    "il_usd": 99.06,
+    "lp_value_usd": 10567.81,
+    "hodl_value_usd": 10468.75,
+    "price_ratio": 1.09,
+    "in_range": true,
+    "price_lower": 3000,
+    "price_upper": 4000,
+    "amplification_factor": 9.43
+  },
+  "summary": "V3 Concentrated IL Analysis..."
 }
 ```
 
