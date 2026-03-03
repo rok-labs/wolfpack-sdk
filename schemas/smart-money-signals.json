@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "smart_money_signals",
+  "description": "Dune-powered smart money wallet activity on Base. Tracks whale and DEX trader flows.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_address": {
+          "type": "string",
+          "description": "0x-prefixed contract address on Base",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "chain": {
+          "type": "string",
+          "default": "base",
+          "enum": ["base"]
+        }
+      },
+      "required": ["token_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "net_flow_24h": { "type": "number", "description": "Net USD flow from smart money wallets in the last 24 hours" },
+        "active_wallets": { "type": "integer", "description": "Number of active smart money wallets trading this token" },
+        "trend": { "type": "string", "description": "Overall smart money trend", "enum": ["accumulating", "distributing", "neutral"] },
+        "top_wallets": {
+          "type": "array",
+          "description": "Top smart money wallets by activity",
+          "items": {
+            "type": "object",
+            "properties": {
+              "address": { "type": "string" },
+              "action": { "type": "string", "enum": ["buy", "sell"] },
+              "amount_usd": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

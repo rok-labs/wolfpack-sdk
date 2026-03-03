@@ -13,11 +13,11 @@ Wolfpack provides 11 intelligence services via multiple protocols. Use this SDK 
 | `token_risk_analysis` | 360° risk audit: honeypot, liquidity, holders, smart money, social | $0.05 | 3-5s |
 | `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement quality, KOL ratio | $0.10 | 2-4s |
 | `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | $0.05 | 2-3s |
-| `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | $0.01 | 2-3s |
+| `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | $0.03 | 2-3s |
 | `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | $0.02 | <1s |
 | `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | $0.03 | 1-2s |
 | `il_calculator` | Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity | $0.03 | 1-2s |
-| `yield_analysis` | IL-aware yield opportunities on Base via DefiLlama | $0.05 | 2-3s |
+| `yield_scanner` | IL-aware yield opportunities on Base via DefiLlama | $0.05 | 2-3s |
 | `technical_analysis` | RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV | $0.05 | 2-3s |
 | `agent_audit_standard` | LLM-driven agent stress test (10 jobs, scored report) | $15.00 | ~5min |
 
@@ -120,7 +120,9 @@ USDC payments on Base, processed automatically. See [`examples/typescript/`](./e
 | `POST /api/v1/intelligence/agent-trust` | agent_trust_score |
 | `POST /api/v1/intelligence/prediction-market` | prediction_market |
 | `POST /api/v1/intelligence/il-calculator` | il_calculator |
-| `POST /api/v1/intelligence/yield-scanner` | yield_analysis |
+| `POST /api/v1/intelligence/smart-money-signals` | smart_money_signals |
+| `POST /api/v1/intelligence/token-market-snapshot` | token_market_snapshot |
+| `POST /api/v1/intelligence/yield-scanner` | yield_scanner |
 | `POST /api/v1/intelligence/technical-analysis` | technical_analysis |
 | `POST /api/v1/intelligence/query` | All services (route via `service_type` field) |
 
@@ -154,9 +156,10 @@ JSON-RPC 2.0 protocol for agent-to-agent communication.
 
 ### 4. Virtuals ACP (Agent Commerce Protocol)
 
-For agents in the Virtuals ecosystem. Wolfpack is registered as a seller with 4 active services and 150+ successful jobs.
+For agents in the Virtuals ecosystem. Wolfpack is registered as a seller with 11 routed services (4 graduated, 7 pending registration) and 150+ successful jobs.
 
-**Services:** `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`
+**Graduated:** `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`
+**Pending registration:** `smart_money_signals`, `token_market_snapshot`, `mega_report`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`
 
 ## Examples
 
@@ -229,6 +232,55 @@ Scores the social momentum of a crypto narrative or token. Analyzes Twitter/X si
   "query": "AI agents on Base",
   "keywords": ["autonomous", "agent", "Base chain"],
   "contracts": ["0x..."]
+}
+```
+
+### smart_money_signals
+
+Dune-powered smart money wallet activity tracking on Base. Identifies whale and DEX trader flows.
+
+**Input:**
+```json
+{
+  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
+  "chain": "base"
+}
+```
+
+**Output:**
+```json
+{
+  "net_flow_24h": 150000,
+  "active_wallets": 12,
+  "trend": "accumulating",
+  "top_wallets": [
+    { "address": "0x...", "action": "buy", "amount_usd": 45000 }
+  ]
+}
+```
+
+### token_market_snapshot
+
+DexScreener market data snapshot — price, volume, liquidity, and buy/sell ratio.
+
+**Input:**
+```json
+{
+  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
+  "chain": "base"
+}
+```
+
+**Output:**
+```json
+{
+  "price_usd": 0.0123,
+  "volume_24h": 5200000,
+  "liquidity_usd": 3100000,
+  "price_change_24h": 12.5,
+  "buys_24h": 8400,
+  "sells_24h": 6200,
+  "buy_sell_ratio": 1.35
 }
 ```
 
@@ -317,7 +369,7 @@ Impermanent loss calculator supporting standard constant-product AMM and Uniswap
 }
 ```
 
-### yield_analysis
+### yield_scanner
 
 IL-aware yield opportunities on Base sourced from DefiLlama. Factors in impermanent loss estimates so agents can compare real returns.
 
