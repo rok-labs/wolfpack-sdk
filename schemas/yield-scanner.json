@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "yield_analysis",
+  "title": "yield_scanner",
   "description": "IL-aware yield opportunities on Base sourced from DefiLlama. Factors in impermanent loss estimates for real return comparison.",
   "type": "object",
   "properties": {

@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "agent_trust_score",
+  "description": "Composite agent reliability rating for ACP/ERC-8004 agents. Scores on ACP performance (40%), network position (25%), operational health (25%), metadata compliance (10%).",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "agent_address": {
+          "type": "string",
+          "description": "0x-prefixed agent wallet address",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "agent_id": {
+          "type": "integer",
+          "description": "Virtuals agent ID"
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "trust_score": { "type": "number", "description": "Overall trust score (0-100)" },
+        "trust_level": { "type": "string", "description": "Trust tier", "enum": ["low", "medium", "high", "very_high"] },
+        "acp_performance": { "type": "number", "description": "ACP job success rate score (40% weight)" },
+        "network_position": { "type": "number", "description": "Network centrality and connections score (25% weight)" },
+        "operational_health": { "type": "number", "description": "Uptime, response time, error rate score (25% weight)" },
+        "metadata_compliance": { "type": "number", "description": "ERC-8004 metadata compliance score (10% weight)" }
+      }
+    }
+  }
+}

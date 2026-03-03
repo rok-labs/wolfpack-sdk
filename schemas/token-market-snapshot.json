@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "token_market_snapshot",
+  "description": "DexScreener market data snapshot: price, volume, liquidity, and buy/sell ratio.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_address": {
+          "type": "string",
+          "description": "0x-prefixed contract address on Base",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "chain": {
+          "type": "string",
+          "default": "base",
+          "enum": ["base"]
+        }
+      },
+      "required": ["token_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "price_usd": { "type": "number", "description": "Current token price in USD" },
+        "volume_24h": { "type": "number", "description": "24-hour trading volume in USD" },
+        "liquidity_usd": { "type": "number", "description": "Total liquidity in USD" },
+        "price_change_24h": { "type": "number", "description": "24-hour price change percentage" },
+        "price_change_1h": { "type": "number", "description": "1-hour price change percentage" },
+        "buys_24h": { "type": "integer", "description": "Number of buy transactions in 24 hours" },
+        "sells_24h": { "type": "integer", "description": "Number of sell transactions in 24 hours" },
+        "buy_sell_ratio": { "type": "number", "description": "Buy/sell ratio (>1 means more buying)" }
+      }
+    }
+  }
+}

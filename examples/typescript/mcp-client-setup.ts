@@ -21,7 +21,9 @@ async function main() {
   // 2. List available tools
   const { tools } = await client.listTools();
   console.log("Available tools:", tools.map(t => t.name));
-  // Output: ['token_risk_analysis', 'security_check', 'narrative_momentum', 'agent_trust_score']
+  // Output: ['mega_report', 'security_check', 'token_risk_analysis', 'narrative_momentum',
+  //          'agent_trust_score', 'smart_money_signals', 'token_market_snapshot',
+  //          'prediction_market', 'il_calculator', 'yield_scanner', 'technical_analysis']
 
   // 3. Call a tool
   const result = await client.callTool({
