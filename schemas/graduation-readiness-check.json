@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "graduation_readiness_check",
+  "description": "ACP graduation readiness assessment. Lite tier: metadata + schema validation. Full tier: live ACP test fires with real job execution.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "integer",
+          "description": "Virtuals agent ID to assess"
+        },
+        "offering_name": {
+          "type": "string",
+          "description": "Name of the ACP offering to check"
+        },
+        "tier": {
+          "type": "string",
+          "description": "Assessment tier: lite ($0.01, metadata only) or full ($1.00, live test fires)",
+          "enum": ["lite", "full"],
+          "default": "lite"
+        }
+      },
+      "required": ["agent_id", "offering_name"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "ready": {
+          "type": "boolean",
+          "description": "Whether the offering is ready for graduation"
+        },
+        "overall_score": {
+          "type": "number",
+          "description": "Readiness score from 0-100",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Critical issues that must be fixed before graduation"
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Non-critical issues that should be addressed"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Suggestions for improving the offering"
+        }
+      }
+    }
+  }
+}

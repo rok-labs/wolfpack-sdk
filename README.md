@@ -2,28 +2,42 @@
 
 On-chain security and market intelligence for trading agents on Base.
 
-Wolfpack provides 11 intelligence services via multiple protocols. Use this SDK to integrate pre-trade security checks, token risk analysis, narrative scoring, and more into your agent or application.
+Wolfpack provides 12 intelligence services, 1 premium audit service, and 3 free resources via multiple protocols. Use this SDK to integrate pre-trade security checks, token risk analysis, narrative scoring, and more into your agent or application.
 
 ## Services
 
-| Service | Description | Price | Latency |
-|---------|-------------|-------|---------|
-| `mega_report` | Aggregated report: security + market + smart money + narrative + TA in one call | $0.15 | 5-8s |
-| `security_check` | GoPlus honeypot detection, contract verification, ownership analysis | $0.01 | <1s |
-| `token_risk_analysis` | 360° risk audit: honeypot, liquidity, holders, smart money, social | $0.05 | 3-5s |
-| `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement quality, KOL ratio | $0.10 | 2-4s |
-| `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | $0.05 | 2-3s |
-| `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | $0.03 | 2-3s |
-| `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | $0.02 | <1s |
-| `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | $0.03 | 1-2s |
-| `il_calculator` | Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity | $0.03 | 1-2s |
-| `yield_scanner` | IL-aware yield opportunities on Base via DefiLlama | $0.05 | 2-3s |
-| `technical_analysis` | RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV | $0.05 | 2-3s |
-| `agent_audit_standard` | LLM-driven agent stress test (10 jobs, scored report) | $15.00 | ~5min |
+All intelligence services are **$0.01** per call (USDC on Base).
+
+| Service | Description | Latency |
+|---------|-------------|---------|
+| `mega_report` | Aggregated report: security + market + smart money + narrative + TA in one call | 5-8s |
+| `security_check` | GoPlus honeypot detection, contract verification, ownership analysis | <1s |
+| `token_risk_analysis` | 360° risk audit: honeypot, liquidity, holders, smart money, social | 3-5s |
+| `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement quality, KOL ratio | 2-4s |
+| `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | 2-3s |
+| `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | 2-3s |
+| `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | <1s |
+| `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | 1-2s |
+| `il_calculator` | Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity | 1-2s |
+| `yield_scanner` | IL-aware yield opportunities on Base via DefiLlama | 2-3s |
+| `technical_analysis` | RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV | 2-3s |
+| `graduation_readiness_check` | ACP graduation readiness assessment (lite $0.01 / full $1.00) | 3-5s |
+
+**Premium:** `agent_audit_standard` — LLM-driven agent stress test (10 jobs, scored report) — **$15.00** / ~5min
+
+## Free Resources
+
+Cached intelligence snapshots, no payment required.
+
+| Resource | Endpoint | Description |
+|----------|----------|-------------|
+| `latest_narrative_signals` | `GET /api/v1/resources/latest-narrative-signals` | Latest crypto narrative signals and trending topics |
+| `token_safety_quick_list` | `GET /api/v1/resources/token-safety-quick-list` | Recently scanned tokens with safety status |
+| `whale_watch_summary` | `GET /api/v1/resources/whale-watch-summary` | Recent smart money / whale activity on Base |
 
 ## Quick Start: One Call Gets Everything
 
-The `mega_report` bundles security, market data, smart money, narrative, and technical analysis into a single request — cheaper than calling each service individually ($0.15 vs ~$0.26).
+The `mega_report` bundles security, market data, smart money, narrative, and technical analysis into a single request — all 5 services run in parallel, one response, one $0.01 call.
 
 ```bash
 # Start a mega report
@@ -118,12 +132,13 @@ USDC payments on Base, processed automatically. See [`examples/typescript/`](./e
 | `POST /api/v1/intelligence/token-risk` | token_risk_analysis |
 | `POST /api/v1/intelligence/narrative-score` | narrative_momentum |
 | `POST /api/v1/intelligence/agent-trust` | agent_trust_score |
-| `POST /api/v1/intelligence/prediction-market` | prediction_market |
-| `POST /api/v1/intelligence/il-calculator` | il_calculator |
 | `POST /api/v1/intelligence/smart-money-signals` | smart_money_signals |
 | `POST /api/v1/intelligence/token-market-snapshot` | token_market_snapshot |
+| `POST /api/v1/intelligence/prediction-market` | prediction_market |
+| `POST /api/v1/intelligence/il-calculator` | il_calculator |
 | `POST /api/v1/intelligence/yield-scanner` | yield_scanner |
 | `POST /api/v1/intelligence/technical-analysis` | technical_analysis |
+| `POST /api/v1/intelligence/graduation-readiness-check` | graduation_readiness_check |
 | `POST /api/v1/intelligence/query` | All services (route via `service_type` field) |
 
 ### 2. MCP (Model Context Protocol)
@@ -145,7 +160,7 @@ Connect any MCP-compatible client (Claude Desktop, Cursor, etc.) to Wolfpack as 
 
 **Server Card:** [`https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json`](https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json)
 
-11 tools available: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`
+12 tools available: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`
 
 ### 3. Google A2A (Agent-to-Agent)
 
@@ -156,10 +171,19 @@ JSON-RPC 2.0 protocol for agent-to-agent communication.
 
 ### 4. Virtuals ACP (Agent Commerce Protocol)
 
-For agents in the Virtuals ecosystem. Wolfpack is registered as a seller with 11 routed services (4 graduated, 7 pending registration) and 150+ successful jobs.
+For agents in the Virtuals ecosystem. Wolfpack is registered as a seller with 12 routed services (3 graduated, 9 pending registration) and 150+ successful jobs.
 
-**Graduated:** `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`
-**Pending registration:** `smart_money_signals`, `token_market_snapshot`, `mega_report`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`
+**Graduated:** `token_risk_analysis`, `security_check`, `narrative_momentum`
+**Pending registration:** `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `mega_report`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`
+
+**Portal name mapping** — Virtuals ACP portal uses different offering names for some services:
+
+| Internal Service Name | Virtuals Portal Name |
+|----------------------|---------------------|
+| `security_check` | `quicksecuritycheck` |
+| `narrative_momentum` | `narrativemomentumscore` |
+| `token_risk_analysis` | `token_risk_analysis` |
+| All other services | Same as internal name |
 
 ## Examples
 
@@ -393,6 +417,41 @@ RSI, SMA, Bollinger Bands, support/resistance levels computed from GeckoTerminal
   "chain": "base",
   "timeframe": "1h",
   "periods": 50
+}
+```
+
+### graduation_readiness_check
+
+ACP graduation readiness assessment. Validates whether an agent's service offering is ready to graduate from Restricted to Shown status on the Virtuals ACP portal.
+
+**Tiers:**
+- **Lite ($0.01):** Metadata + schema validation only. Checks offering description, input/output schemas, and endpoint configuration.
+- **Full ($1.00):** Live ACP test fires. Executes real jobs against the offering and validates end-to-end response quality.
+
+**Input:**
+```json
+{
+  "agent_id": 16907,
+  "offering_name": "token_risk_analysis",
+  "tier": "lite"
+}
+```
+
+**Output:**
+```json
+{
+  "ready": false,
+  "overall_score": 72,
+  "blockers": [
+    "Output schema missing 'risk_level' field"
+  ],
+  "warnings": [
+    "Description under 50 characters"
+  ],
+  "recommendations": [
+    "Add example input/output to offering metadata",
+    "Include error handling documentation"
+  ]
 }
 ```
 

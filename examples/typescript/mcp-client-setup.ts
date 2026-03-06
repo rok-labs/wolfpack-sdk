@@ -23,7 +23,8 @@ async function main() {
   console.log("Available tools:", tools.map(t => t.name));
   // Output: ['mega_report', 'security_check', 'token_risk_analysis', 'narrative_momentum',
   //          'agent_trust_score', 'smart_money_signals', 'token_market_snapshot',
-  //          'prediction_market', 'il_calculator', 'yield_scanner', 'technical_analysis']
+  //          'prediction_market', 'il_calculator', 'yield_scanner', 'technical_analysis',
+  //          'graduation_readiness_check']
 
   // 3. Call a tool
   const result = await client.callTool({
