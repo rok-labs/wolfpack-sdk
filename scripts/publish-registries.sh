@@ -13,9 +13,12 @@ echo ""
 
 # --- Smithery ---
 echo "--- Step 1: Publish to Smithery ---"
-echo "API key when prompted: d127bebe-4777-499e-af0f-1ba5e3cf5e61"
+if [ -z "${SMITHERY_API_KEY:-}" ]; then
+  echo "ERROR: SMITHERY_API_KEY env var not set. Set it in Railway or export locally."
+  exit 1
+fi
 echo ""
-npx -y @smithery/cli mcp publish "https://api.wolfpack.roklabs.dev/api/v1/mcp" \
+SMITHERY_API_KEY="$SMITHERY_API_KEY" npx -y @smithery/cli mcp publish "https://api.wolfpack.roklabs.dev/api/v1/mcp" \
   --name "rok-labs/wolfpack-intelligence" \
   --config-schema '{"type":"object","properties":{"chain":{"type":"string","default":"base","enum":["base","ethereum"]}}}'
 
