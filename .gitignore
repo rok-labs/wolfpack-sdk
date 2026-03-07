@@ -1,3 +1,6 @@
 # MCP Registry auth tokens
 .mcpregistry_github_token
 .mcpregistry_registry_token
+
+# Publish scripts (contain operational secrets)
+scripts/publish-registries.sh

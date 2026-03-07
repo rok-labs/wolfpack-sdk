@@ -24,7 +24,7 @@ async function main() {
   // Output: ['mega_report', 'security_check', 'token_risk_analysis', 'narrative_momentum',
   //          'agent_trust_score', 'smart_money_signals', 'token_market_snapshot',
   //          'prediction_market', 'il_calculator', 'yield_scanner', 'technical_analysis',
-  //          'graduation_readiness_check']
+  //          'graduation_readiness_check', 'agent_credit_risk_index']
 
   // 3. Call a tool
   const result = await client.callTool({

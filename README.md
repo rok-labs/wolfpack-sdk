@@ -2,26 +2,27 @@
 
 On-chain security and market intelligence for trading agents on Base.
 
-Wolfpack provides 12 intelligence services, 1 premium audit service, and 3 free resources via multiple protocols. Use this SDK to integrate pre-trade security checks, token risk analysis, narrative scoring, and more into your agent or application.
+Wolfpack provides 13 intelligence services, 1 premium audit service, and 3 free resources via multiple protocols. Use this SDK to integrate pre-trade security checks, token risk analysis, narrative scoring, and more into your agent or application.
 
 ## Services
 
-All intelligence services are **$0.01** per call (USDC on Base).
+All prices in USDC on Base.
 
-| Service | Description | Latency |
-|---------|-------------|---------|
-| `mega_report` | Aggregated report: security + market + smart money + narrative + TA in one call | 5-8s |
-| `security_check` | GoPlus honeypot detection, contract verification, ownership analysis | <1s |
-| `token_risk_analysis` | 360° risk audit: honeypot, liquidity, holders, smart money, social | 3-5s |
-| `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement quality, KOL ratio | 2-4s |
-| `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | 2-3s |
-| `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | 2-3s |
-| `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | <1s |
-| `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | 1-2s |
-| `il_calculator` | Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity | 1-2s |
-| `yield_scanner` | IL-aware yield opportunities on Base via DefiLlama | 2-3s |
-| `technical_analysis` | RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV | 2-3s |
-| `graduation_readiness_check` | ACP graduation readiness assessment (lite $0.01 / full $1.00) | 3-5s |
+| Service | Description | Price | Latency |
+|---------|-------------|-------|---------|
+| `security_check` | GoPlus honeypot detection, contract verification, ownership analysis | $0.01 | <1s |
+| `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | $0.01 | <1s |
+| `token_risk_analysis` | 360° risk audit: honeypot, liquidity, holders, smart money, social | $0.02 | 3-5s |
+| `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | $0.03 | 2-3s |
+| `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement quality, KOL ratio | $0.05 | 2-4s |
+| `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | $0.05 | 1-2s |
+| `technical_analysis` | RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV | $0.05 | 2-3s |
+| `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | $0.10 | 2-3s |
+| `il_calculator` | Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity | $0.10 | 1-2s |
+| `agent_credit_risk_index` | Financial credit risk scoring for ACP agents (liquidity, reliability, maturity) | $0.10 | 2-3s |
+| `yield_scanner` | IL-aware yield opportunities on Base via DefiLlama | $0.15 | 2-3s |
+| `mega_report` | Aggregated report: security + market + smart money + narrative + TA in one call | $0.50 | 5-8s |
+| `graduation_readiness_check` | Live ACP graduation readiness audit with real test fires | $1.49 | 3-5s |
 
 **Premium:** `agent_audit_standard` — LLM-driven agent stress test (10 jobs, scored report) — **$15.00** / ~5min
 
@@ -37,7 +38,7 @@ Cached intelligence snapshots, no payment required.
 
 ## Quick Start: One Call Gets Everything
 
-The `mega_report` bundles security, market data, smart money, narrative, and technical analysis into a single request — all 5 services run in parallel, one response, one $0.01 call.
+The `mega_report` bundles security, market data, smart money, narrative, and technical analysis into a single request — all 5 services run in parallel, one response, one call ($0.50).
 
 ```bash
 # Start a mega report
@@ -139,6 +140,7 @@ USDC payments on Base, processed automatically. See [`examples/typescript/`](./e
 | `POST /api/v1/intelligence/yield-scanner` | yield_scanner |
 | `POST /api/v1/intelligence/technical-analysis` | technical_analysis |
 | `POST /api/v1/intelligence/graduation-readiness-check` | graduation_readiness_check |
+| `POST /api/v1/intelligence/agent-credit-risk-index` | agent_credit_risk_index |
 | `POST /api/v1/intelligence/query` | All services (route via `service_type` field) |
 
 ### 2. MCP (Model Context Protocol)
@@ -160,7 +162,7 @@ Connect any MCP-compatible client (Claude Desktop, Cursor, etc.) to Wolfpack as 
 
 **Server Card:** [`https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json`](https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json)
 
-12 tools available: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`
+13 tools available: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`, `agent_credit_risk_index`
 
 ### 3. Google A2A (Agent-to-Agent)
 
@@ -171,10 +173,10 @@ JSON-RPC 2.0 protocol for agent-to-agent communication.
 
 ### 4. Virtuals ACP (Agent Commerce Protocol)
 
-For agents in the Virtuals ecosystem. Wolfpack is registered as a seller with 12 routed services (3 graduated, 9 pending registration) and 150+ successful jobs.
+For agents in the Virtuals ecosystem. Wolfpack is registered as a seller with 13 routed services (3 graduated, 10 pending registration) and 150+ successful jobs.
 
 **Graduated:** `token_risk_analysis`, `security_check`, `narrative_momentum`
-**Pending registration:** `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `mega_report`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`
+**Pending registration:** `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `mega_report`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`, `agent_credit_risk_index`
 
 **Portal name mapping** — Virtuals ACP portal uses different offering names for some services:
 
@@ -422,18 +424,13 @@ RSI, SMA, Bollinger Bands, support/resistance levels computed from GeckoTerminal
 
 ### graduation_readiness_check
 
-ACP graduation readiness assessment. Validates whether an agent's service offering is ready to graduate from Restricted to Shown status on the Virtuals ACP portal.
-
-**Tiers:**
-- **Lite ($0.01):** Metadata + schema validation only. Checks offering description, input/output schemas, and endpoint configuration.
-- **Full ($1.00):** Live ACP test fires. Executes real jobs against the offering and validates end-to-end response quality.
+Live ACP graduation readiness audit ($1.49). Fires real test jobs against agent services, scores job lifecycle handling, schema correctness, and output consistency.
 
 **Input:**
 ```json
 {
-  "agent_id": 16907,
-  "offering_name": "token_risk_analysis",
-  "tier": "lite"
+  "target_agent_address": "0xbaC206A51E126DD97DC8046CB9a17fF4F4D9d7f2",
+  "offering_name": "token_risk_analysis"
 }
 ```
 
@@ -452,6 +449,42 @@ ACP graduation readiness assessment. Validates whether an agent's service offeri
     "Add example input/output to offering metadata",
     "Include error handling documentation"
   ]
+}
+```
+
+### agent_credit_risk_index
+
+Financial credit risk scoring for ACP agents. Three pillars: realized liquidity (USDC balance vs job fees, 40%), execution reliability (success rate weighted by volume, 40%), wallet maturity (age + VIRTUAL holdings, 20%).
+
+**Input:**
+```json
+{
+  "agent_id": 16907
+}
+```
+
+**Output:**
+```json
+{
+  "credit_score": 78,
+  "credit_rating": "A",
+  "realized_liquidity": {
+    "score": 85,
+    "usdc_balance": 12.50,
+    "avg_job_fee": 0.05,
+    "coverage_ratio": 250.0
+  },
+  "execution_reliability": {
+    "score": 72,
+    "success_rate": 0.94,
+    "total_jobs": 156,
+    "volume_weighted_rate": 0.91
+  },
+  "wallet_maturity": {
+    "score": 75,
+    "wallet_age_days": 120,
+    "virtual_holdings": 5000.0
+  }
 }
 ```
 

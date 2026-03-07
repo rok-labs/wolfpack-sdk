@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "agent_credit_risk_index",
+  "description": "Financial credit risk scoring for ACP agents. Three pillars: realized liquidity (USDC balance vs job fees, 40%), execution reliability (success rate weighted by volume, 40%), wallet maturity (age + VIRTUAL holdings, 20%). Returns credit score 0-100 with rating.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "integer",
+          "description": "ACP/ERC-8004 agent ID to score"
+        }
+      },
+      "required": ["agent_id"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "credit_score": {
+          "type": "number",
+          "description": "Credit risk score from 0-100 (higher = lower risk)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "credit_rating": {
+          "type": "string",
+          "description": "Credit rating tier",
+          "enum": ["AAA", "AA", "A", "BBB", "BB", "B", "CCC", "D"]
+        },
+        "realized_liquidity": {
+          "type": "object",
+          "description": "Liquidity pillar (40% weight)",
+          "properties": {
+            "score": { "type": "number" },
+            "usdc_balance": { "type": "number" },
+            "avg_job_fee": { "type": "number" },
+            "coverage_ratio": { "type": "number" }
+          }
+        },
+        "execution_reliability": {
+          "type": "object",
+          "description": "Execution pillar (40% weight)",
+          "properties": {
+            "score": { "type": "number" },
+            "success_rate": { "type": "number" },
+            "total_jobs": { "type": "integer" },
+            "volume_weighted_rate": { "type": "number" }
+          }
+        },
+        "wallet_maturity": {
+          "type": "object",
+          "description": "Maturity pillar (20% weight)",
+          "properties": {
+            "score": { "type": "number" },
+            "wallet_age_days": { "type": "integer" },
+            "virtual_holdings": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}

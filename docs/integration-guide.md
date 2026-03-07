@@ -23,7 +23,7 @@ if (report.technical_analysis.rsi_14 > 80) return { action: "wait", reason: "ove
 return { action: "trade", confidence: 100 - report.overall_risk_score };
 ```
 
-At **$0.01 per call**, `mega_report` runs all 5 services in parallel and returns a unified response — same price as any individual service, but all dimensions of intelligence in one request.
+At **$0.50 per call**, `mega_report` runs all 5 services in parallel and returns a unified response — one call, one response, all dimensions of intelligence in one request.
 
 ## Modular Integration: Pick What You Need
 
@@ -114,7 +114,7 @@ If your agent uses the Model Context Protocol, add Wolfpack as a tool provider:
 }
 ```
 
-Your agent can then call all 12 tools natively: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`.
+Your agent can then call all 13 tools natively: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`, `agent_credit_risk_index`.
 
 ## Error Handling
 

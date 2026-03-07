@@ -3,7 +3,7 @@
   "name": "io.github.rok-labs/wolfpack-intelligence",
   "title": "Wolfpack Intelligence",
   "description": "On-chain security and market intelligence for trading agents on Base.",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "remotes": [
     {
       "type": "streamable-http",
