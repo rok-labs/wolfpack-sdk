@@ -1,28 +1,22 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "graduation_readiness_check",
-  "description": "ACP graduation readiness assessment. Lite tier: metadata + schema validation. Full tier: live ACP test fires with real job execution.",
+  "description": "Live ACP graduation readiness audit ($1.49 USDC). Fires real test jobs against agent services, scores job lifecycle handling, schema correctness, and output consistency.",
   "type": "object",
   "properties": {
     "request": {
       "type": "object",
       "properties": {
-        "agent_id": {
-          "type": "integer",
-          "description": "Virtuals agent ID to assess"
+        "target_agent_address": {
+          "type": "string",
+          "description": "0x-prefixed wallet address of the agent to assess"
         },
         "offering_name": {
           "type": "string",
-          "description": "Name of the ACP offering to check"
-        },
-        "tier": {
-          "type": "string",
-          "description": "Assessment tier: lite ($0.01, metadata only) or full ($1.00, live test fires)",
-          "enum": ["lite", "full"],
-          "default": "lite"
+          "description": "Name of the ACP offering to check (optional — omit to check all offerings)"
         }
       },
-      "required": ["agent_id", "offering_name"]
+      "required": ["target_agent_address"]
     },
     "response": {
       "type": "object",

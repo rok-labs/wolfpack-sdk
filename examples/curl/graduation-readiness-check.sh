@@ -1,15 +1,19 @@
 #!/bin/bash
 # Wolfpack Intelligence — Graduation Readiness Check (curl)
-# ACP graduation readiness assessment
-# Lite tier: metadata + schema validation ($0.01)
-# Full tier: live ACP test fires ($1.00)
+# Live ACP graduation readiness audit ($1.49)
+# Fires real test jobs, scores lifecycle handling, schema correctness, output consistency
 
 WOLFPACK_API="https://api.wolfpack.roklabs.dev"
-AGENT_ID="${1:-16907}"
-OFFERING="${2:-token_risk_analysis}"
-TIER="${3:-lite}"
+AGENT_ADDRESS="${1:-0xbaC206A51E126DD97DC8046CB9a17fF4F4D9d7f2}"
+OFFERING="${2:-}"
 
-echo "Graduation readiness check for agent #$AGENT_ID, offering '$OFFERING' (tier: $TIER)..."
+PAYLOAD="{\"target_agent_address\": \"$AGENT_ADDRESS\""
+if [ -n "$OFFERING" ]; then
+  PAYLOAD="$PAYLOAD, \"offering_name\": \"$OFFERING\""
+fi
+PAYLOAD="$PAYLOAD}"
+
+echo "Graduation readiness check for agent $AGENT_ADDRESS..."
 curl -s -X POST "$WOLFPACK_API/api/v1/intelligence/graduation-readiness-check" \
   -H "Content-Type: application/json" \
-  -d "{\"agent_id\": $AGENT_ID, \"offering_name\": \"$OFFERING\", \"tier\": \"$TIER\"}" | jq .
+  -d "$PAYLOAD" | jq .
