@@ -1,6 +1,6 @@
 #!/bin/bash
 # Wolfpack Intelligence — Graduation Readiness Check (curl)
-# Live ACP graduation readiness audit ($1.49)
+# Live ACP graduation readiness audit ($5.00)
 # Fires real test jobs, scores lifecycle handling, schema correctness, output consistency
 
 WOLFPACK_API="https://api.wolfpack.roklabs.dev"

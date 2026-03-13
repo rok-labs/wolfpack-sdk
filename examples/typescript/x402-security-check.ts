@@ -11,9 +11,21 @@ const WOLFPACK_API = "https://api.wolfpack.roklabs.dev";
 
 async function securityCheck(tokenAddress: string): Promise<{
   safe: boolean;
-  honeypot: boolean;
-  verified_source: boolean;
-  hidden_owner: boolean;
+  checks: {
+    is_honeypot: boolean;
+    verified_source: boolean;
+    hidden_owner: boolean;
+    can_take_back_ownership: boolean;
+    is_proxy: boolean;
+    is_mintable: boolean;
+    selfdestruct: boolean;
+    owner_change_balance: boolean;
+    is_blacklisted: boolean;
+    is_open_source: boolean;
+    external_call: boolean;
+    transfer_pausable: boolean;
+    trading_cooldown: boolean;
+  };
   holder_count: number;
   top10_holder_percent: number;
   risk_flags: string[];
@@ -42,8 +54,8 @@ async function main() {
   const result = await securityCheck(DEGEN);
 
   console.log(`Safe: ${result.safe}`);
-  console.log(`Honeypot: ${result.honeypot}`);
-  console.log(`Verified: ${result.verified_source}`);
+  console.log(`Honeypot: ${result.checks.is_honeypot}`);
+  console.log(`Verified: ${result.checks.verified_source}`);
   console.log(`Holders: ${result.holder_count}`);
   console.log(`Top 10 concentration: ${result.top10_holder_percent}%`);
 

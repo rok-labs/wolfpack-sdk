@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "agent_audit",
+  "description": "LLM-driven agent stress test and scoring. Fires 10 adversarial test jobs against the target agent, scores response quality, latency, error handling, and schema compliance. Premium service ($15.00), not available on Virtuals ACP.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "agent_address": {
+          "type": "string",
+          "description": "0x-prefixed wallet address of the agent to audit",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "service_type": {
+          "type": "string",
+          "description": "Service/offering to stress test"
+        }
+      },
+      "required": ["agent_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "overall_score": { "type": "number", "description": "Audit score 0-100", "minimum": 0, "maximum": 100 },
+        "grade": { "type": "string", "enum": ["A+", "A", "B+", "B", "C+", "C", "D", "F"] },
+        "jobs_fired": { "type": "integer", "description": "Number of test jobs executed" },
+        "jobs_passed": { "type": "integer", "description": "Number of test jobs that passed" },
+        "categories": {
+          "type": "object",
+          "properties": {
+            "response_quality": { "type": "number" },
+            "latency": { "type": "number" },
+            "error_handling": { "type": "number" },
+            "schema_compliance": { "type": "number" }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "severity": { "type": "string", "enum": ["critical", "warning", "info"] },
+              "message": { "type": "string" }
+            }
+          }
+        },
+        "duration_ms": { "type": "integer" }
+      }
+    }
+  }
+}

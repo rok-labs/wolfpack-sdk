@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "token_risk_analysis",
-  "description": "Comprehensive multi-source token risk scoring. Combines GoPlus, DexScreener, Dune Analytics, and Twitter social signals.",
+  "description": "Comprehensive multi-source token risk scoring. Combines GoPlus, DexScreener, Dune Analytics, and Twitter social signals. Response uses nested checks with sub-objects containing passed/details/locked_pct fields.",
   "type": "object",
   "properties": {
     "request": {
@@ -22,6 +22,11 @@
           "description": "standard = fast (~3s), deep = comprehensive with narrative fallback (~8s)",
           "enum": ["standard", "deep"],
           "default": "standard"
+        },
+        "attestation": {
+          "type": "boolean",
+          "description": "Request EIP-712 signed attestation (Base chain ID 8453)",
+          "default": false
         }
       },
       "required": ["token_address"]
@@ -31,10 +36,58 @@
       "properties": {
         "risk_score": { "type": "number", "description": "Overall risk score 0-100 (higher = riskier)" },
         "risk_level": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
-        "security": { "type": "object", "description": "GoPlus security check results" },
-        "liquidity": { "type": "object", "description": "DexScreener liquidity and volume data" },
-        "social": { "type": "object", "description": "Twitter social signal analysis" },
-        "smart_money": { "type": "object", "description": "Dune smart money activity" }
+        "recommendation": { "type": "string", "description": "Actionable recommendation based on risk assessment" },
+        "analysis_timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp of when the analysis was performed" },
+        "checks": {
+          "type": "object",
+          "description": "Nested check results with sub-objects",
+          "properties": {
+            "security": {
+              "type": "object",
+              "description": "GoPlus security check results",
+              "properties": {
+                "passed": { "type": "boolean" },
+                "details": { "type": "object" },
+                "risk_flags": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "liquidity": {
+              "type": "object",
+              "description": "DexScreener liquidity and volume data",
+              "properties": {
+                "passed": { "type": "boolean" },
+                "details": { "type": "object" },
+                "locked_pct": { "type": "number", "description": "Percentage of liquidity locked" }
+              }
+            },
+            "social": {
+              "type": "object",
+              "description": "Twitter social signal analysis",
+              "properties": {
+                "passed": { "type": "boolean" },
+                "details": { "type": "object" }
+              }
+            },
+            "smart_money": {
+              "type": "object",
+              "description": "Dune smart money activity",
+              "properties": {
+                "passed": { "type": "boolean" },
+                "details": { "type": "object" }
+              }
+            }
+          }
+        },
+        "attestation": {
+          "type": "object",
+          "description": "EIP-712 signed attestation (only present when requested)",
+          "properties": {
+            "signature": { "type": "string" },
+            "nonce": { "type": "integer" },
+            "chain_id": { "type": "integer" },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
       }
     }
   }

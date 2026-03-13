@@ -58,7 +58,7 @@ if (ta.rsi_14 > 80) return { action: "wait", reason: "overbought" };
 
 // 4. Narrative momentum check (2-4 seconds)
 const narrative = await fetch(".../narrative-score", { ... }).then(r => r.json());
-if (narrative.momentum_score < 20) return { action: "wait", reason: "low social momentum" };
+if (narrative.score < 20) return { action: "wait", reason: "low social momentum" };
 
 // 5. All checks passed — execute trade
 return { action: "trade", confidence: Math.max(0, 100 - risk.risk_score) };
@@ -114,7 +114,7 @@ If your agent uses the Model Context Protocol, add Wolfpack as a tool provider:
 }
 ```
 
-Your agent can then call all 13 tools natively: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`, `agent_credit_risk_index`.
+Your agent can then call all 10 MCP tools natively: `security_check`, `token_risk_analysis`, `narrative_momentum`, `token_market_snapshot`, `smart_money_signals`, `technical_analysis`, `mega_report`, `prediction_market`, `il_calculator`, `yield_scanner`.
 
 ## Error Handling
 

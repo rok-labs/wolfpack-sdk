@@ -5,17 +5,19 @@
   "services": [
     {
       "name": "security_check",
-      "description": "GoPlus-powered token security scan",
+      "description": "GoPlus-powered token security scan with 13-point checks object",
       "endpoint": "/api/v1/intelligence/security-check",
       "price_usd": 0.01,
-      "avg_latency_ms": 800
+      "avg_latency_ms": 800,
+      "attestation": true
     },
     {
       "name": "token_risk_analysis",
-      "description": "Multi-source 360° token risk scoring",
+      "description": "Multi-source 360° token risk scoring with nested sub-checks",
       "endpoint": "/api/v1/intelligence/token-risk",
       "price_usd": 0.02,
-      "avg_latency_ms": 4000
+      "avg_latency_ms": 4000,
+      "attestation": true
     },
     {
       "name": "narrative_momentum",
@@ -25,78 +27,86 @@
       "avg_latency_ms": 3000
     },
     {
-      "name": "agent_trust_score",
-      "description": "Composite agent reliability rating",
-      "endpoint": "/api/v1/intelligence/agent-trust",
-      "price_usd": 0.03,
-      "avg_latency_ms": 2500
-    },
-    {
-      "name": "smart_money_signals",
-      "description": "Dune-powered smart money wallet activity on Base",
-      "endpoint": "/api/v1/intelligence/smart-money-signals",
-      "price_usd": 0.10,
-      "avg_latency_ms": 2500
-    },
-    {
       "name": "token_market_snapshot",
       "description": "DexScreener market data snapshot",
       "endpoint": "/api/v1/intelligence/token-market-snapshot",
-      "price_usd": 0.01,
+      "price_usd": 0.25,
       "avg_latency_ms": 800
     },
     {
-      "name": "mega_report",
-      "description": "Aggregated report: security + market data + smart money + narrative + TA in one call",
-      "endpoint": "/api/v1/intelligence/mega-report",
+      "name": "agent_trust_score",
+      "description": "Composite agent reliability rating",
+      "endpoint": "/api/v1/intelligence/agent-trust",
       "price_usd": 0.50,
-      "avg_latency_ms": 8000
-    },
-    {
-      "name": "prediction_market",
-      "description": "Polymarket crypto prediction market odds, volume, and liquidity",
-      "endpoint": "/api/v1/intelligence/prediction-market",
-      "price_usd": 0.05,
-      "avg_latency_ms": 2000
+      "avg_latency_ms": 2500,
+      "attestation": true
     },
     {
       "name": "il_calculator",
       "description": "Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity",
       "endpoint": "/api/v1/intelligence/il-calculator",
-      "price_usd": 0.10,
+      "price_usd": 0.50,
       "avg_latency_ms": 1500
+    },
+    {
+      "name": "smart_money_signals",
+      "description": "Dune-powered smart money wallet activity on Base",
+      "endpoint": "/api/v1/intelligence/smart-money-signals",
+      "price_usd": 1.00,
+      "avg_latency_ms": 2500
+    },
+    {
+      "name": "prediction_market",
+      "description": "Polymarket crypto prediction market odds, volume, and liquidity",
+      "endpoint": "/api/v1/intelligence/prediction-market",
+      "price_usd": 1.00,
+      "avg_latency_ms": 2000
     },
     {
       "name": "yield_scanner",
       "description": "IL-aware yield opportunities on Base via DefiLlama",
       "endpoint": "/api/v1/intelligence/yield-scanner",
-      "price_usd": 0.15,
+      "price_usd": 1.00,
       "avg_latency_ms": 3000
     },
     {
       "name": "technical_analysis",
       "description": "RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV data",
       "endpoint": "/api/v1/intelligence/technical-analysis",
-      "price_usd": 0.05,
+      "price_usd": 1.00,
       "avg_latency_ms": 2500
     },
     {
-      "name": "graduation_readiness_check",
-      "description": "Live ACP graduation readiness audit. Fires real test jobs against agent services, scores job lifecycle handling, schema correctness, and output consistency.",
-      "endpoint": "/api/v1/intelligence/graduation-readiness-check",
-      "price_usd": 1.49,
-      "avg_latency_ms": 5000
-    },
-    {
       "name": "agent_credit_risk_index",
-      "description": "Financial credit risk scoring for ACP agents. Three pillars: realized liquidity (40%), execution reliability (40%), wallet maturity (20%).",
+      "description": "Financial credit risk scoring for ACP agents (liquidity, reliability, maturity)",
       "endpoint": "/api/v1/intelligence/agent-credit-risk-index",
-      "price_usd": 0.10,
+      "price_usd": 1.00,
       "avg_latency_ms": 3000
     },
     {
-      "name": "agent_audit_standard",
-      "description": "LLM-driven agent stress test and scoring (premium)",
+      "name": "trade_signals",
+      "description": "Composite trade signal generation combining TA, smart money, narrative, and risk scoring",
+      "endpoint": "/api/v1/intelligence/trade-signals",
+      "price_usd": 2.00,
+      "avg_latency_ms": 5000
+    },
+    {
+      "name": "mega_report",
+      "description": "Aggregated report: security + market data + smart money + narrative + TA in one call",
+      "endpoint": "/api/v1/intelligence/mega-report",
+      "price_usd": 5.00,
+      "avg_latency_ms": 8000
+    },
+    {
+      "name": "graduation_readiness_check",
+      "description": "Live ACP graduation readiness audit with real test fires",
+      "endpoint": "/api/v1/intelligence/graduation-readiness-check",
+      "price_usd": 5.00,
+      "avg_latency_ms": 5000
+    },
+    {
+      "name": "agent_audit",
+      "description": "LLM-driven agent stress test and scoring (premium, not on Virtuals)",
       "endpoint": "/api/v1/intelligence/query",
       "price_usd": 15.00,
       "avg_latency_ms": 300000
@@ -125,20 +135,24 @@
   "protocols": {
     "x402": {
       "base_url": "https://api.wolfpack.roklabs.dev/api/v1/intelligence",
-      "payment": "USDC on Base"
+      "payment": "USDC on Base",
+      "require_payment": true
     },
     "mcp": {
       "url": "https://api.wolfpack.roklabs.dev/api/v1/mcp",
-      "server_card": "https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json"
+      "server_card": "https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json",
+      "tools_count": 10,
+      "auth": "none"
     },
     "a2a": {
       "url": "https://api.wolfpack.roklabs.dev/api/v1/a2a",
-      "agent_card": "https://api.wolfpack.roklabs.dev/.well-known/agent.json"
+      "agent_card": "https://api.wolfpack.roklabs.dev/.well-known/agent.json",
+      "auth": "none"
     },
     "acp": {
       "agent_id": 16907,
       "services_graduated": ["token_risk_analysis", "security_check", "narrative_momentum"],
-      "services_pending": ["agent_trust_score", "smart_money_signals", "token_market_snapshot", "mega_report", "prediction_market", "il_calculator", "yield_scanner", "technical_analysis", "graduation_readiness_check", "agent_credit_risk_index"],
+      "services_pending": ["agent_trust_score", "smart_money_signals", "token_market_snapshot", "mega_report", "prediction_market", "il_calculator", "yield_scanner", "technical_analysis", "graduation_readiness_check", "agent_credit_risk_index", "trade_signals"],
       "portal_name_mapping": {
         "token_risk_analysis": "token_risk_analysis",
         "security_check": "quicksecuritycheck",
@@ -152,8 +166,23 @@
         "yield_scanner": "yield_scanner",
         "technical_analysis": "technical_analysis",
         "graduation_readiness_check": "graduation_readiness_check",
-        "agent_credit_risk_index": "agent_credit_risk_index"
+        "agent_credit_risk_index": "agent_credit_risk_index",
+        "trade_signals": "trade_signals"
+      },
+      "compaction": {
+        "enabled": true,
+        "max_json_chars": 2000,
+        "number_precision": 3,
+        "array_max_items": 3,
+        "string_max_chars": 100
       }
     }
+  },
+  "attestation": {
+    "type": "EIP-712",
+    "chain_id": 8453,
+    "supported_services": ["security_check", "token_risk_analysis", "agent_trust_score"],
+    "parameter": "attestation",
+    "nonce": "monotonic"
   }
 }

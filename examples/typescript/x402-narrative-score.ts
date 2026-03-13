@@ -29,9 +29,9 @@ async function main() {
     ["autonomous", "agent", "virtual"],
   );
 
-  console.log(`Momentum Score: ${result.momentum_score}/100`);
+  console.log(`Momentum Score: ${result.score}/100`);
   console.log(`Sentiment: ${result.sentiment}`);
-  console.log(`Tweet Count: ${result.tweet_count}`);
+  console.log(`Mention Count: ${result.mention_count}`);
   console.log(JSON.stringify(result, null, 2));
 }
 
