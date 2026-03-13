@@ -2,152 +2,130 @@
 
 On-chain security and market intelligence for trading agents on Base.
 
-Wolfpack provides 13 intelligence services, 1 premium audit service, and 3 free resources via multiple protocols. Use this SDK to integrate pre-trade security checks, token risk analysis, narrative scoring, and more into your agent or application.
+Wolfpack provides 14 intelligence services, 1 premium audit service, and 3 free resources via x402, MCP, A2A, and ACP. Over 3,000 queries served across 13+ unique agent buyers. 3 services graduated on Virtuals ACP, 11 pending graduation.
 
 ## Services
 
-All prices in USDC on Base.
+All prices in USDC on Base. x402 endpoints require USDC payment. MCP and A2A are free.
 
 | Service | Description | Price | Latency |
 |---------|-------------|-------|---------|
-| `security_check` | GoPlus honeypot detection, contract verification, ownership analysis | $0.01 | <1s |
-| `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | $0.01 | <1s |
-| `token_risk_analysis` | 360° risk audit: honeypot, liquidity, holders, smart money, social | $0.02 | 3-5s |
-| `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | $0.03 | 2-3s |
-| `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement quality, KOL ratio | $0.05 | 2-4s |
-| `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | $0.05 | 1-2s |
-| `technical_analysis` | RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV | $0.05 | 2-3s |
-| `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | $0.10 | 2-3s |
-| `il_calculator` | Impermanent loss calculator for standard AMM and Uni V3 concentrated liquidity | $0.10 | 1-2s |
-| `agent_credit_risk_index` | Financial credit risk scoring for ACP agents (liquidity, reliability, maturity) | $0.10 | 2-3s |
-| `yield_scanner` | IL-aware yield opportunities on Base via DefiLlama | $0.15 | 2-3s |
-| `mega_report` | Aggregated report: security + market + smart money + narrative + TA in one call | $0.50 | 5-8s |
-| `graduation_readiness_check` | Live ACP graduation readiness audit with real test fires | $1.49 | 3-5s |
+| `security_check` | GoPlus 13-point security scan (nested `checks` object) | $0.01 | <1s |
+| `token_risk_analysis` | 360° risk audit with nested `checks` sub-objects | $0.02 | 3-5s |
+| `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement, KOL ratio | $0.05 | 2-4s |
+| `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | $0.25 | <1s |
+| `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | $0.50 | 2-3s |
+| `il_calculator` | Impermanent loss for standard AMM and Uni V3 concentrated liquidity | $0.50 | 1-2s |
+| `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | $1.00 | 2-3s |
+| `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | $1.00 | 1-2s |
+| `yield_scanner` | IL-aware yield opportunities on Base via DefiLlama | $1.00 | 2-3s |
+| `technical_analysis` | RSI, SMA, Bollinger Bands, support/resistance from GeckoTerminal OHLCV | $1.00 | 2-3s |
+| `agent_credit_risk_index` | Financial credit risk scoring for ACP agents (liquidity, reliability, maturity) | $1.00 | 2-3s |
+| `trade_signals` | Composite buy/sell/hold signals from TA + smart money + narrative + risk | $2.00 | 3-5s |
+| `mega_report` | Aggregated: security + market + smart money + narrative + TA in one call | $5.00 | 5-8s |
+| `graduation_readiness_check` | Live ACP graduation readiness audit with real test fires | $5.00 | 3-5s |
 
-**Premium:** `agent_audit_standard` — LLM-driven agent stress test (10 jobs, scored report) — **$15.00** / ~5min
+**Premium:** `agent_audit` — LLM-driven agent stress test (10 jobs, scored report) — **$15.00** / ~5min (not on Virtuals)
 
 ## Free Resources
 
 Cached intelligence snapshots, no payment required.
 
-| Resource | Endpoint | Description |
-|----------|----------|-------------|
-| `latest_narrative_signals` | `GET /api/v1/resources/latest-narrative-signals` | Latest crypto narrative signals and trending topics |
-| `token_safety_quick_list` | `GET /api/v1/resources/token-safety-quick-list` | Recently scanned tokens with safety status |
-| `whale_watch_summary` | `GET /api/v1/resources/whale-watch-summary` | Recent smart money / whale activity on Base |
+| Resource | Endpoint |
+|----------|----------|
+| `latest_narrative_signals` | `GET /api/v1/resources/latest-narrative-signals` |
+| `token_safety_quick_list` | `GET /api/v1/resources/token-safety-quick-list` |
+| `whale_watch_summary` | `GET /api/v1/resources/whale-watch-summary` |
 
-## Quick Start: One Call Gets Everything
+## Authentication
 
-The `mega_report` bundles security, market data, smart money, narrative, and technical analysis into a single request — all 5 services run in parallel, one response, one call ($0.50).
+| Protocol | Auth | Notes |
+|----------|------|-------|
+| **x402** | USDC payment (no API key) | Payment embedded in HTTP header. All x402 endpoints require payment. |
+| **MCP** | None | Unauthenticated, free |
+| **A2A** | None | Unauthenticated, free |
+| **ACP** | Virtuals agent identity | USDC via Virtuals escrow |
+| **Admin** | `WOLFPACK_ADMIN_KEY` or `WOLFPACK_READ_KEY` | Header-based key auth |
+| **Dashboard** | Cookie session | Browser sessions for dashboard UI |
 
-```bash
-# Start a mega report
-curl -X POST https://api.wolfpack.roklabs.dev/api/v1/intelligence/mega-report \
-  -H "Content-Type: application/json" \
-  -d '{"token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed", "chain": "base"}'
-
-# Response includes a report_id — retrieve the full report:
-curl https://api.wolfpack.roklabs.dev/api/mega-reports/abc123-report-id
-```
-
-**mega_report input:**
-```json
-{
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "chain": "base"
-}
-```
-
-**mega_report output:**
-```json
-{
-  "report_id": "abc123-report-id",
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "security": {
-    "safe": true,
-    "honeypot": false,
-    "verified_source": true,
-    "risk_flags": []
-  },
-  "market": {
-    "price_usd": 0.0123,
-    "volume_24h": 5200000,
-    "liquidity_usd": 3100000,
-    "price_change_24h": 12.5
-  },
-  "smart_money": {
-    "net_flow_24h": 150000,
-    "active_wallets": 12,
-    "trend": "accumulating"
-  },
-  "narrative": {
-    "momentum_score": 72,
-    "sentiment": "bullish",
-    "tweet_count": 340
-  },
-  "technical_analysis": {
-    "rsi_14": 58.3,
-    "sma_20": 0.0118,
-    "bollinger_position": "middle",
-    "support": 0.0105,
-    "resistance": 0.0140
-  },
-  "overall_risk_score": 35,
-  "risk_level": "medium"
-}
-```
-
-## Quick Start: Simple Security Check
-
-```typescript
-// TypeScript — x402 micropayment
-import { getPaymentHeader } from "@anthropic-ai/x402";
-
-const res = await fetch("https://api.wolfpack.roklabs.dev/api/v1/intelligence/security-check", {
-  method: "POST",
-  headers: { "Content-Type": "application/json", ...await getPaymentHeader() },
-  body: JSON.stringify({ token_address: "0x..." }),
-});
-const { safe, risk_flags } = await res.json();
-```
+## Quick Start: Security Check
 
 ```bash
-# curl — no SDK needed
 curl -X POST https://api.wolfpack.roklabs.dev/api/v1/intelligence/security-check \
   -H "Content-Type: application/json" \
   -d '{"token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed"}'
 ```
 
-## Integration Protocols
+Response (nested `checks` object with 13 fields):
+```json
+{
+  "safe": true,
+  "checks": {
+    "is_honeypot": false,
+    "verified_source": true,
+    "hidden_owner": false,
+    "can_take_back_ownership": false,
+    "is_proxy": false,
+    "is_mintable": false,
+    "selfdestruct": false,
+    "owner_change_balance": false,
+    "is_blacklisted": false,
+    "is_open_source": true,
+    "external_call": false,
+    "transfer_pausable": false,
+    "trading_cooldown": false
+  },
+  "holder_count": 45000,
+  "top10_holder_percent": 32.5,
+  "creator_percent": 0.0,
+  "risk_flags": []
+}
+```
 
-### 1. x402 Micropayments (Pay-per-call)
+## Quick Start: Mega Report
 
-USDC payments on Base, processed automatically. See [`examples/typescript/`](./examples/typescript/) and [`examples/python/`](./examples/python/).
+```bash
+# Submit
+curl -X POST https://api.wolfpack.roklabs.dev/api/v1/intelligence/mega-report \
+  -H "Content-Type: application/json" \
+  -d '{"token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed", "chain": "base"}'
+
+# Retrieve full report
+curl https://api.wolfpack.roklabs.dev/api/mega-reports/<report_id>
+```
+
+## x402 Endpoints (All 18)
+
+All endpoints require USDC payment on Base via x402 protocol.
 
 **Base URL:** `https://api.wolfpack.roklabs.dev`
 
-| Endpoint | Service |
-|----------|---------|
-| `POST /api/v1/intelligence/mega-report` | mega_report |
-| `POST /api/v1/intelligence/security-check` | security_check |
-| `POST /api/v1/intelligence/token-risk` | token_risk_analysis |
-| `POST /api/v1/intelligence/narrative-score` | narrative_momentum |
-| `POST /api/v1/intelligence/agent-trust` | agent_trust_score |
-| `POST /api/v1/intelligence/smart-money-signals` | smart_money_signals |
-| `POST /api/v1/intelligence/token-market-snapshot` | token_market_snapshot |
-| `POST /api/v1/intelligence/prediction-market` | prediction_market |
-| `POST /api/v1/intelligence/il-calculator` | il_calculator |
-| `POST /api/v1/intelligence/yield-scanner` | yield_scanner |
-| `POST /api/v1/intelligence/technical-analysis` | technical_analysis |
-| `POST /api/v1/intelligence/graduation-readiness-check` | graduation_readiness_check |
-| `POST /api/v1/intelligence/agent-credit-risk-index` | agent_credit_risk_index |
-| `POST /api/v1/intelligence/query` | All services (route via `service_type` field) |
+| Endpoint | Service | Price |
+|----------|---------|-------|
+| `POST /api/v1/intelligence/security-check` | security_check | $0.01 |
+| `POST /api/v1/intelligence/token-risk` | token_risk_analysis | $0.02 |
+| `POST /api/v1/intelligence/narrative-score` | narrative_momentum | $0.05 |
+| `POST /api/v1/intelligence/token-market-snapshot` | token_market_snapshot | $0.25 |
+| `POST /api/v1/intelligence/agent-trust` | agent_trust_score | $0.50 |
+| `POST /api/v1/intelligence/il-calculator` | il_calculator | $0.50 |
+| `POST /api/v1/intelligence/smart-money-signals` | smart_money_signals | $1.00 |
+| `POST /api/v1/intelligence/prediction-market` | prediction_market | $1.00 |
+| `POST /api/v1/intelligence/yield-scanner` | yield_scanner | $1.00 |
+| `POST /api/v1/intelligence/technical-analysis` | technical_analysis | $1.00 |
+| `POST /api/v1/intelligence/agent-credit-risk-index` | agent_credit_risk_index | $1.00 |
+| `POST /api/v1/intelligence/trade-signals` | trade_signals | $2.00 |
+| `POST /api/v1/intelligence/mega-report` | mega_report | $5.00 |
+| `GET  /api/mega-reports/:id` | mega_report (retrieve) | — |
+| `POST /api/v1/intelligence/graduation-readiness-check` | graduation_readiness_check | $5.00 |
+| `POST /api/v1/intelligence/query` | Unified query (route via `service_type`) | varies |
+| `POST /api/v1/intelligence/query` | agent_audit (via `service_type`) | $15.00 |
+| `GET  /api/v1/resources/*` | Free resources (3 endpoints) | free |
 
-### 2. MCP (Model Context Protocol)
+## MCP (Model Context Protocol)
 
 Connect any MCP-compatible client (Claude Desktop, Cursor, etc.) to Wolfpack as a tool provider.
 
-**Drop-in config for Claude Desktop** — copy [`mcp/claude-desktop-config.json`](./mcp/claude-desktop-config.json) to your Claude Desktop settings:
+**Config for Claude Desktop** — copy [`mcp/claude-desktop-config.json`](./mcp/claude-desktop-config.json):
 
 ```json
 {
@@ -162,337 +140,149 @@ Connect any MCP-compatible client (Claude Desktop, Cursor, etc.) to Wolfpack as 
 
 **Server Card:** [`https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json`](https://api.wolfpack.roklabs.dev/.well-known/mcp/server-card.json)
 
-13 tools available: `mega_report`, `security_check`, `token_risk_analysis`, `narrative_momentum`, `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`, `agent_credit_risk_index`
+**10 MCP tools available:**
 
-### 3. Google A2A (Agent-to-Agent)
+1. `security_check` — GoPlus token security scan
+2. `token_risk_analysis` — Multi-source risk scoring
+3. `narrative_momentum` — Social momentum scoring
+4. `token_market_snapshot` — DexScreener market data
+5. `smart_money_signals` — Dune smart money activity
+6. `technical_analysis` — RSI, SMA, Bollinger Bands
+7. `mega_report` — Aggregated intelligence report
+8. `prediction_market` — Polymarket prediction data
+9. `il_calculator` — Impermanent loss calculator
+10. `yield_scanner` — IL-aware yield opportunities
+
+## Google A2A (Agent-to-Agent)
 
 JSON-RPC 2.0 protocol for agent-to-agent communication.
 
 **Endpoint:** `POST https://api.wolfpack.roklabs.dev/api/v1/a2a`
 **Agent Card:** [`https://api.wolfpack.roklabs.dev/.well-known/agent.json`](https://api.wolfpack.roklabs.dev/.well-known/agent.json)
 
-### 4. Virtuals ACP (Agent Commerce Protocol)
+## Virtuals ACP (Agent Commerce Protocol)
 
-For agents in the Virtuals ecosystem. Wolfpack is registered as a seller with 13 routed services (3 graduated, 10 pending registration) and 150+ successful jobs.
+For agents in the Virtuals ecosystem. 3 graduated services, 11 pending graduation, 3,000+ queries across 13+ unique agent buyers.
 
 **Graduated:** `token_risk_analysis`, `security_check`, `narrative_momentum`
-**Pending registration:** `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `mega_report`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`, `agent_credit_risk_index`
+**Pending:** `agent_trust_score`, `smart_money_signals`, `token_market_snapshot`, `mega_report`, `prediction_market`, `il_calculator`, `yield_scanner`, `technical_analysis`, `graduation_readiness_check`, `agent_credit_risk_index`, `trade_signals`
 
-**Portal name mapping** — Virtuals ACP portal uses different offering names for some services:
+**Portal name mapping** — Virtuals ACP portal uses different names for some services:
 
-| Internal Service Name | Virtuals Portal Name |
-|----------------------|---------------------|
+| Internal Name | Virtuals Portal Name |
+|---------------|---------------------|
 | `security_check` | `quicksecuritycheck` |
 | `narrative_momentum` | `narrativemomentumscore` |
-| `token_risk_analysis` | `token_risk_analysis` |
-| All other services | Same as internal name |
+| All others | Same as internal name |
+
+## EIP-712 Attestation
+
+Three services support verifiable signed attestations: `security_check`, `token_risk_analysis`, and `agent_trust_score`.
+
+Pass `"attestation": true` in the request body:
+
+```bash
+curl -X POST https://api.wolfpack.roklabs.dev/api/v1/intelligence/security-check \
+  -H "Content-Type: application/json" \
+  -d '{"token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed", "attestation": true}'
+```
+
+The response includes an EIP-712 typed signature that can be verified on-chain:
+
+```json
+{
+  "safe": true,
+  "checks": { "..." : "..." },
+  "attestation": {
+    "signature": "0xabc123...",
+    "nonce": 42,
+    "chain_id": 8453,
+    "timestamp": "2026-03-13T12:00:00Z"
+  }
+}
+```
+
+- **Chain ID:** 8453 (Base)
+- **Nonce:** Monotonic (prevents replay)
+- **Supported services:** `security_check`, `token_risk_analysis`, `agent_trust_score`
+
+## ACP Response Compaction
+
+When services are called via ACP (Virtuals Agent Commerce Protocol), responses are compacted to fit ACP's message size constraints:
+
+| Rule | Detail |
+|------|--------|
+| Numbers | Rounded to 3 decimal places |
+| Arrays | Capped to 3 items |
+| Strings | Truncated at 100 characters |
+| Total | Hard 2,000-character JSON budget |
+
+**x402 / direct API returns full uncompacted responses.** If you need complete data (all array items, full precision, full strings), use x402 or direct HTTP instead of ACP.
+
+Example: `narrative_momentum` via ACP returns `top_tweets` capped to 3 items with `.text` field removed. The same call via x402 returns all tweets with full text.
+
+## Service Details
+
+### security_check
+
+GoPlus-powered token security scan. Response uses a nested `checks` object (not flat top-level fields). 13 boolean checks covering honeypot, ownership, proxy, minting, blacklisting, self-destruct, and more. Supports EIP-712 attestation.
+
+**Input:** `{ "token_address": "0x...", "chain": "base", "attestation": false }`
+
+### token_risk_analysis
+
+Multi-source 360° risk scoring. Response uses nested `checks` with sub-objects: each check has `{ passed, details, locked_pct }` fields. Includes `recommendation` and `analysis_timestamp` fields. Supports EIP-712 attestation.
+
+**Input:** `{ "token_address": "0x...", "chain": "base", "analysis_depth": "standard", "attestation": false }`
+
+### narrative_momentum
+
+Social momentum scoring. **Field names differ from older versions:** `score` (not `momentum_score`), `mention_count` (not `tweet_count`), `sentiment` is a number from -1 to +1 (not an enum string). `top_tweets` capped to 3, `.text` field removed by compaction.
+
+**Input:** `{ "query": "AI agents on Base", "keywords": ["autonomous"], "contracts": ["0x..."] }`
+
+### trade_signals
+
+Composite trade signal generation. Combines technical analysis, smart money flows, narrative momentum, and risk scoring into actionable buy/sell/hold signals with confidence levels, entry/stop-loss/take-profit suggestions.
+
+**Input:** `{ "token_address": "0x...", "chain": "base", "timeframe": "4h" }`
+
+### mega_report
+
+Aggregated intelligence: security + market data + smart money + narrative + TA. Submit via POST, retrieve via GET using the returned `report_id`.
+
+**Input:** `{ "token_address": "0x...", "chain": "base" }`
+
+### graduation_readiness_check
+
+Live ACP graduation readiness audit ($5.00). Fires real test jobs against agent services, scores job lifecycle handling, schema correctness, and output consistency.
+
+**Input:** `{ "target_agent_address": "0x...", "offering_name": "token_risk_analysis" }`
+
+### agent_credit_risk_index
+
+Financial credit risk scoring. Three pillars: realized liquidity (40%), execution reliability (40%), wallet maturity (20%). Returns 0-100 score with letter rating.
+
+**Input:** `{ "agent_id": 16907 }`
+
+### agent_audit
+
+LLM-driven agent stress test ($15.00, not on Virtuals). Fires 10 adversarial test jobs, scores response quality, latency, error handling, schema compliance.
+
+**Input:** `{ "agent_address": "0x...", "service_type": "token_risk_analysis" }`
 
 ## Examples
 
 - **TypeScript:** [`examples/typescript/`](./examples/typescript/) — x402 payment, MCP client, A2A task
 - **Python:** [`examples/python/`](./examples/python/) — x402 payment examples
-- **curl:** [`examples/curl/`](./examples/curl/) — Raw HTTP examples for any language
+- **curl:** [`examples/curl/`](./examples/curl/) — Raw HTTP examples for all services
 - **Schemas:** [`schemas/`](./schemas/) — JSON Schema for all service inputs/outputs
-
-## Service Details
-
-### mega_report
-
-Aggregated intelligence report combining security, market data, smart money, narrative, and technical analysis in one call. Submit via POST, retrieve the full report via GET using the returned `report_id`.
-
-**Input:**
-```json
-{
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "chain": "base"
-}
-```
-
-**Output:** See [mega_report output example above](#quick-start-one-call-gets-everything).
-
-### security_check
-
-Fast GoPlus-powered token safety scan. Returns honeypot status, contract verification, ownership flags, holder concentration.
-
-**Input:**
-```json
-{
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "chain": "base"
-}
-```
-
-**Output:**
-```json
-{
-  "safe": true,
-  "honeypot": false,
-  "verified_source": true,
-  "hidden_owner": false,
-  "holder_count": 45000,
-  "top10_holder_percent": 32.5,
-  "risk_flags": []
-}
-```
-
-### token_risk_analysis
-
-Multi-source risk scoring combining GoPlus, DexScreener, Dune Analytics, and Twitter social signals.
-
-**Input:**
-```json
-{
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "chain": "base",
-  "analysis_depth": "standard"
-}
-```
-
-### narrative_momentum
-
-Scores the social momentum of a crypto narrative or token. Analyzes Twitter/X signals with VADER sentiment, engagement quality metrics, and influencer ratio.
-
-**Input:**
-```json
-{
-  "query": "AI agents on Base",
-  "keywords": ["autonomous", "agent", "Base chain"],
-  "contracts": ["0x..."]
-}
-```
-
-### smart_money_signals
-
-Dune-powered smart money wallet activity tracking on Base. Identifies whale and DEX trader flows.
-
-**Input:**
-```json
-{
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "chain": "base"
-}
-```
-
-**Output:**
-```json
-{
-  "net_flow_24h": 150000,
-  "active_wallets": 12,
-  "trend": "accumulating",
-  "top_wallets": [
-    { "address": "0x...", "action": "buy", "amount_usd": 45000 }
-  ]
-}
-```
-
-### token_market_snapshot
-
-DexScreener market data snapshot — price, volume, liquidity, and buy/sell ratio.
-
-**Input:**
-```json
-{
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "chain": "base"
-}
-```
-
-**Output:**
-```json
-{
-  "price_usd": 0.0123,
-  "volume_24h": 5200000,
-  "liquidity_usd": 3100000,
-  "price_change_24h": 12.5,
-  "buys_24h": 8400,
-  "sells_24h": 6200,
-  "buy_sell_ratio": 1.35
-}
-```
-
-### agent_trust_score
-
-Composite reliability rating for ACP/ERC-8004 agents. Scores on ACP performance (40%), network position (25%), operational health (25%), metadata compliance (10%).
-
-**Input:**
-```json
-{
-  "agent_address": "0x...",
-  "agent_id": 16907
-}
-```
-
-### prediction_market
-
-Polymarket crypto prediction market data — odds, volume, liquidity, and outcome probabilities.
-
-**Input:**
-```json
-{
-  "query": "Bitcoin above 100k",
-  "category": "crypto"
-}
-```
-
-**Output:**
-```json
-{
-  "markets": [
-    {
-      "title": "Will Bitcoin be above $100k on June 30?",
-      "outcome_yes": 0.72,
-      "outcome_no": 0.28,
-      "volume_usd": 4500000,
-      "liquidity_usd": 890000,
-      "end_date": "2026-06-30T00:00:00Z"
-    }
-  ],
-  "total_markets": 1
-}
-```
-
-### il_calculator
-
-Impermanent loss calculator supporting standard constant-product AMM and Uniswap V3 concentrated liquidity positions.
-
-**Input (standard):**
-```json
-{
-  "entry_price": 3200.0,
-  "current_price": 3500.0,
-  "position_size_usd": 10000
-}
-```
-
-**Input (concentrated — Uni V3):**
-```json
-{
-  "entry_price": 3200.0,
-  "current_price": 3500.0,
-  "position_size_usd": 10000,
-  "pool_type": "concentrated",
-  "price_lower": 3000.0,
-  "price_upper": 4000.0
-}
-```
-
-**Output:**
-```json
-{
-  "pool_type": "concentrated",
-  "il": {
-    "il_percent": 0.95,
-    "il_usd": 99.06,
-    "lp_value_usd": 10567.81,
-    "hodl_value_usd": 10468.75,
-    "price_ratio": 1.09,
-    "in_range": true,
-    "price_lower": 3000,
-    "price_upper": 4000,
-    "amplification_factor": 9.43
-  },
-  "summary": "V3 Concentrated IL Analysis..."
-}
-```
-
-### yield_scanner
-
-IL-aware yield opportunities on Base sourced from DefiLlama. Factors in impermanent loss estimates so agents can compare real returns.
-
-**Input:**
-```json
-{
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "min_tvl_usd": 100000,
-  "min_apy": 5.0
-}
-```
-
-### technical_analysis
-
-RSI, SMA, Bollinger Bands, support/resistance levels computed from GeckoTerminal OHLCV data.
-
-**Input:**
-```json
-{
-  "token_address": "0x4ed4E862860BeD51a9570b96d89aF5E1B0Efefed",
-  "chain": "base",
-  "timeframe": "1h",
-  "periods": 50
-}
-```
-
-### graduation_readiness_check
-
-Live ACP graduation readiness audit ($1.49). Fires real test jobs against agent services, scores job lifecycle handling, schema correctness, and output consistency.
-
-**Input:**
-```json
-{
-  "target_agent_address": "0xbaC206A51E126DD97DC8046CB9a17fF4F4D9d7f2",
-  "offering_name": "token_risk_analysis"
-}
-```
-
-**Output:**
-```json
-{
-  "ready": false,
-  "overall_score": 72,
-  "blockers": [
-    "Output schema missing 'risk_level' field"
-  ],
-  "warnings": [
-    "Description under 50 characters"
-  ],
-  "recommendations": [
-    "Add example input/output to offering metadata",
-    "Include error handling documentation"
-  ]
-}
-```
-
-### agent_credit_risk_index
-
-Financial credit risk scoring for ACP agents. Three pillars: realized liquidity (USDC balance vs job fees, 40%), execution reliability (success rate weighted by volume, 40%), wallet maturity (age + VIRTUAL holdings, 20%).
-
-**Input:**
-```json
-{
-  "agent_id": 16907
-}
-```
-
-**Output:**
-```json
-{
-  "credit_score": 78,
-  "credit_rating": "A",
-  "realized_liquidity": {
-    "score": 85,
-    "usdc_balance": 12.50,
-    "avg_job_fee": 0.05,
-    "coverage_ratio": 250.0
-  },
-  "execution_reliability": {
-    "score": 72,
-    "success_rate": 0.94,
-    "total_jobs": 156,
-    "volume_weighted_rate": 0.91
-  },
-  "wallet_maturity": {
-    "score": 75,
-    "wallet_age_days": 120,
-    "virtual_holdings": 5000.0
-  }
-}
-```
 
 ## Architecture
 
-Wolfpack Intelligence is a live production system running on Base chain. Services are deterministic where possible (no LLM in security_check, smart_money_signals, token_market_snapshot) and LLM-enhanced where value requires it (narrative_momentum, agent_audit).
+Wolfpack Intelligence runs on Base chain. Services are deterministic where possible (no LLM in security_check, smart_money_signals, token_market_snapshot) and LLM-enhanced where needed (narrative_momentum, agent_audit).
 
-All data is sourced from on-chain and public APIs: GoPlus Security, DexScreener, Dune Analytics, TwitterAPI.io, CoinGecko, GeckoTerminal, DefiLlama, Polymarket.
+Data sources: GoPlus Security, DexScreener, Dune Analytics, TwitterAPI.io, CoinGecko, GeckoTerminal, DefiLlama, Polymarket.
 
 ## Links
 

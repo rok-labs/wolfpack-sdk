@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "security_check",
-  "description": "GoPlus-powered token security scan. Returns honeypot status, contract verification, ownership flags, and holder concentration.",
+  "description": "GoPlus-powered token security scan. Returns a nested checks object with 13 boolean/numeric fields covering honeypot, ownership, proxy, minting, blacklisting, and holder concentration.",
   "type": "object",
   "properties": {
     "request": {
@@ -17,6 +17,11 @@
           "description": "Blockchain network",
           "default": "base",
           "enum": ["base"]
+        },
+        "attestation": {
+          "type": "boolean",
+          "description": "Request EIP-712 signed attestation (Base chain ID 8453)",
+          "default": false
         }
       },
       "required": ["token_address"]
@@ -25,16 +30,39 @@
       "type": "object",
       "properties": {
         "safe": { "type": "boolean", "description": "Overall safety verdict (false if any critical flag is set)" },
-        "honeypot": { "type": "boolean", "description": "Token is a honeypot (cannot sell)" },
-        "verified_source": { "type": "boolean", "description": "Contract source code is verified on explorer" },
-        "hidden_owner": { "type": "boolean", "description": "Contract has a hidden owner" },
-        "can_take_back_ownership": { "type": "boolean", "description": "Owner can reclaim ownership after renouncing" },
-        "is_proxy": { "type": "boolean", "description": "Contract is upgradeable proxy (informational, not inherently unsafe)" },
-        "is_mintable": { "type": "boolean", "description": "Token supply can be minted (informational)" },
+        "checks": {
+          "type": "object",
+          "description": "Nested checks object with all 13 security flags",
+          "properties": {
+            "is_honeypot": { "type": "boolean", "description": "Token is a honeypot (cannot sell)" },
+            "verified_source": { "type": "boolean", "description": "Contract source code is verified on explorer" },
+            "hidden_owner": { "type": "boolean", "description": "Contract has a hidden owner" },
+            "can_take_back_ownership": { "type": "boolean", "description": "Owner can reclaim ownership after renouncing" },
+            "is_proxy": { "type": "boolean", "description": "Contract is upgradeable proxy" },
+            "is_mintable": { "type": "boolean", "description": "Token supply can be minted" },
+            "selfdestruct": { "type": "boolean", "description": "Contract contains selfdestruct opcode" },
+            "owner_change_balance": { "type": "boolean", "description": "Owner can modify token balances" },
+            "is_blacklisted": { "type": "boolean", "description": "Token contract has blacklist functionality" },
+            "is_open_source": { "type": "boolean", "description": "Contract source code is publicly available" },
+            "external_call": { "type": "boolean", "description": "Contract makes external calls to unknown addresses" },
+            "transfer_pausable": { "type": "boolean", "description": "Token transfers can be paused by owner" },
+            "trading_cooldown": { "type": "boolean", "description": "Token enforces a trading cooldown period" }
+          }
+        },
         "holder_count": { "type": "number", "description": "Total number of token holders" },
         "top10_holder_percent": { "type": "number", "description": "Percentage of supply held by top 10 wallets" },
         "creator_percent": { "type": "number", "description": "Percentage of supply held by contract creator" },
-        "risk_flags": { "type": "array", "items": { "type": "string" }, "description": "List of active risk flags" }
+        "risk_flags": { "type": "array", "items": { "type": "string" }, "description": "List of active risk flags" },
+        "attestation": {
+          "type": "object",
+          "description": "EIP-712 signed attestation (only present when requested)",
+          "properties": {
+            "signature": { "type": "string" },
+            "nonce": { "type": "integer" },
+            "chain_id": { "type": "integer" },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
       }
     }
   }

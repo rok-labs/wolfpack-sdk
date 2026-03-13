@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "trade_signals",
+  "description": "Composite trade signal generation. Combines technical analysis, smart money flows, narrative momentum, and risk scoring into actionable buy/sell/hold signals with confidence levels.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "token_address": {
+          "type": "string",
+          "description": "0x-prefixed contract address on Base",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "chain": {
+          "type": "string",
+          "default": "base",
+          "enum": ["base"]
+        },
+        "timeframe": {
+          "type": "string",
+          "description": "Signal timeframe",
+          "enum": ["1h", "4h", "1d"],
+          "default": "4h"
+        }
+      },
+      "required": ["token_address"]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "signal": { "type": "string", "description": "Composite trade signal", "enum": ["strong_buy", "buy", "hold", "sell", "strong_sell"] },
+        "confidence": { "type": "number", "description": "Signal confidence 0-100", "minimum": 0, "maximum": 100 },
+        "components": {
+          "type": "object",
+          "description": "Individual signal components",
+          "properties": {
+            "technical": { "type": "string", "enum": ["bullish", "neutral", "bearish"] },
+            "smart_money": { "type": "string", "enum": ["accumulating", "neutral", "distributing"] },
+            "narrative": { "type": "string", "enum": ["positive", "neutral", "negative"] },
+            "risk": { "type": "string", "enum": ["low", "medium", "high", "critical"] }
+          }
+        },
+        "entry_price": { "type": "number", "description": "Suggested entry price (USD)" },
+        "stop_loss": { "type": "number", "description": "Suggested stop loss price (USD)" },
+        "take_profit": { "type": "number", "description": "Suggested take profit price (USD)" },
+        "timeframe": { "type": "string" },
+        "generated_at": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

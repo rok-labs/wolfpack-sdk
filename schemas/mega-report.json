@@ -27,11 +27,10 @@
         "token_address": { "type": "string", "description": "Token address analyzed" },
         "security": {
           "type": "object",
-          "description": "GoPlus security scan results",
+          "description": "GoPlus security scan results (nested checks object)",
           "properties": {
             "safe": { "type": "boolean" },
-            "honeypot": { "type": "boolean" },
-            "verified_source": { "type": "boolean" },
+            "checks": { "type": "object", "description": "13-field nested checks object" },
             "risk_flags": { "type": "array", "items": { "type": "string" } }
           }
         },
@@ -58,9 +57,9 @@
           "type": "object",
           "description": "Social momentum analysis",
           "properties": {
-            "momentum_score": { "type": "number" },
-            "sentiment": { "type": "string" },
-            "tweet_count": { "type": "integer" }
+            "score": { "type": "number" },
+            "sentiment": { "type": "number", "minimum": -1, "maximum": 1 },
+            "mention_count": { "type": "integer" }
           }
         },
         "technical_analysis": {

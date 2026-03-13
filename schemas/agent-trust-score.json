@@ -15,6 +15,11 @@
         "agent_id": {
           "type": "integer",
           "description": "Virtuals agent ID"
+        },
+        "attestation": {
+          "type": "boolean",
+          "description": "Request EIP-712 signed attestation (Base chain ID 8453)",
+          "default": false
         }
       }
     },
@@ -26,7 +31,17 @@
         "acp_performance": { "type": "number", "description": "ACP job success rate score (40% weight)" },
         "network_position": { "type": "number", "description": "Network centrality and connections score (25% weight)" },
         "operational_health": { "type": "number", "description": "Uptime, response time, error rate score (25% weight)" },
-        "metadata_compliance": { "type": "number", "description": "ERC-8004 metadata compliance score (10% weight)" }
+        "metadata_compliance": { "type": "number", "description": "ERC-8004 metadata compliance score (10% weight)" },
+        "attestation": {
+          "type": "object",
+          "description": "EIP-712 signed attestation (only present when requested)",
+          "properties": {
+            "signature": { "type": "string" },
+            "nonce": { "type": "integer" },
+            "chain_id": { "type": "integer" },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        }
       }
     }
   }

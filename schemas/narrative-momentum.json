@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "narrative_momentum",
-  "description": "Score the momentum of a crypto narrative or topic. Analyzes Twitter/X social signals.",
+  "description": "Score the momentum of a crypto narrative or topic. Analyzes Twitter/X social signals. Response uses score (not momentum_score), mention_count (not tweet_count), and sentiment is a number from -1 to +1.",
   "type": "object",
   "properties": {
     "request": {
@@ -16,11 +16,25 @@
     "response": {
       "type": "object",
       "properties": {
-        "momentum_score": { "type": "number", "description": "Overall momentum 0-100" },
-        "sentiment": { "type": "string", "enum": ["very_bearish", "bearish", "neutral", "bullish", "very_bullish"] },
-        "tweet_count": { "type": "number", "description": "Number of tweets analyzed" },
+        "score": { "type": "number", "description": "Overall momentum score 0-100" },
+        "sentiment": { "type": "number", "description": "Sentiment score from -1.0 (very bearish) to +1.0 (very bullish)", "minimum": -1, "maximum": 1 },
+        "mention_count": { "type": "integer", "description": "Number of mentions analyzed" },
         "engagement_quality": { "type": "number", "description": "Quality-weighted engagement 0-100" },
-        "influencer_ratio": { "type": "number", "description": "Ratio of high-follower accounts in the conversation" }
+        "influencer_ratio": { "type": "number", "description": "Ratio of high-follower accounts in the conversation (0-1)" },
+        "top_tweets": {
+          "type": "array",
+          "description": "Top tweets by engagement (capped to 3 items, .text field removed by compaction)",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "author": { "type": "string" },
+              "followers": { "type": "integer" },
+              "engagement": { "type": "integer" }
+            }
+          }
+        }
       }
     }
   }
