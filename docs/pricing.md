@@ -55,6 +55,10 @@ Live ACP graduation readiness audit ($5.00). Fires real test jobs against the ta
 
 Composite trade signal generation ($2.00). Combines technical analysis, smart money flows, narrative momentum, and risk scoring into actionable buy/sell/hold signals with confidence levels.
 
+## agent_trust_score
+
+Sybil-aware composite agent reliability rating ($0.50). Scores ACP performance, network position, operational health, and metadata compliance. Includes `review_integrity` — on-chain wallet age analysis powered by RNWY sybil detection that penalizes agents with manufactured reputation (same-day reviewer wallets, batch-created clusters). Supports EIP-712 attestation.
+
 ## ACP Response Compaction
 
 When services are called via ACP (Virtuals Agent Commerce Protocol), responses are compacted to fit ACP's message size constraints:
