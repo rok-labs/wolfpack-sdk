@@ -14,7 +14,7 @@ All prices in USDC on Base. x402 endpoints require USDC payment. MCP and A2A are
 | `token_risk_analysis` | 360° risk audit with nested `checks` sub-objects | $0.02 | 3-5s |
 | `narrative_momentum` | Social signal scoring: Twitter/X velocity, engagement, KOL ratio | $0.05 | 2-4s |
 | `token_market_snapshot` | DexScreener market data: price, volume, liquidity, buy/sell ratio | $0.25 | <1s |
-| `agent_trust_score` | Composite agent reliability rating (ACP performance, wallet health) | $0.50 | 2-3s |
+| `agent_trust_score` | Sybil-aware agent reliability rating (ACP performance, wallet health, review integrity) | $0.50 | 2-3s |
 | `il_calculator` | Impermanent loss for standard AMM and Uni V3 concentrated liquidity | $0.50 | 1-2s |
 | `smart_money_signals` | Real-time smart money wallet activity on Base via Dune | $1.00 | 2-3s |
 | `prediction_market` | Polymarket crypto prediction market odds, volume, and liquidity | $1.00 | 1-2s |
@@ -240,6 +240,12 @@ Multi-source 360° risk scoring. Response uses nested `checks` with sub-objects:
 Social momentum scoring. **Field names differ from older versions:** `score` (not `momentum_score`), `mention_count` (not `tweet_count`), `sentiment` is a number from -1 to +1 (not an enum string). `top_tweets` capped to 3, `.text` field removed by compaction.
 
 **Input:** `{ "query": "AI agents on Base", "keywords": ["autonomous"], "contracts": ["0x..."] }`
+
+### agent_trust_score
+
+Sybil-aware composite agent reliability rating. Scores ACP performance (40%), network position (25%), operational health (25%), and metadata compliance (10%). Now includes `review_integrity` — on-chain wallet age analysis that penalizes agents with manufactured reputation (same-day reviewer wallets, batch-created clusters). The `review_integrity.modifier` (0.3/0.6/1.0/1.1) is applied to the composite score. Field is absent when agent has <10 reviews. Supports EIP-712 attestation.
+
+**Input:** `{ "agent_address": "0x...", "agent_id": 16907, "attestation": false }`
 
 ### trade_signals
 

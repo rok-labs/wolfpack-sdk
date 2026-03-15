@@ -32,6 +32,43 @@
         "network_position": { "type": "number", "description": "Network centrality and connections score (25% weight)" },
         "operational_health": { "type": "number", "description": "Uptime, response time, error rate score (25% weight)" },
         "metadata_compliance": { "type": "number", "description": "ERC-8004 metadata compliance score (10% weight)" },
+        "review_integrity": {
+          "type": "object",
+          "description": "Sybil-aware review integrity scoring via on-chain wallet age analysis. Absent when agent has <10 reviews or data is unavailable.",
+          "properties": {
+            "modifier": {
+              "type": "number",
+              "description": "Multiplier applied to composite trust score",
+              "enum": [0.3, 0.6, 1.0, 1.1]
+            },
+            "same_day_pct": {
+              "type": "number",
+              "description": "Percentage of reviewers whose wallets were created the same day as their review (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "low_history_pct": {
+              "type": "number",
+              "description": "Percentage of reviewers with wallets under 30 days old (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "sybil_flags": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Detected sybil patterns (empty array if clean)"
+            },
+            "clustering": {
+              "type": ["object", "null"],
+              "description": "Batch wallet creation data if detected, null otherwise",
+              "properties": {
+                "cluster_size": { "type": "integer" },
+                "creation_window_hours": { "type": "number" },
+                "common_funder": { "type": "string" }
+              }
+            }
+          }
+        },
         "attestation": {
           "type": "object",
           "description": "EIP-712 signed attestation (only present when requested)",
